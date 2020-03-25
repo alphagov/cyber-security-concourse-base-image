@@ -1,0 +1,42 @@
+resources:
+  - name: concourse-base-image-git
+    type: git
+    source:
+      branch: master
+      private_key: ((base-image-git-priv-key))
+      uri: git@github.com:alphagov/cyber-security-concourse-base-image.git
+
+  - name: concourse-base-image-docker-hub
+    type: registry-image
+    source:
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
+      repository: gdscyber/cyber-security-concourse-base-image
+
+jobs:
+  - name: build_base_docker_image
+    serial: false
+    plan:
+    - get: concourse-base-image-git
+      trigger: true
+
+    - task: build
+      privileged: true
+      config:
+        platform: linux
+        image_resource:
+          type: registry-image
+          source:
+            repository: vito/oci-build-task
+        params:
+          CONTEXT: concourse-base-image-git/
+        inputs:
+        - name: concourse-base-image-git
+        outputs:
+        - name: image
+        run:
+          path: build
+
+    - put: concourse-base-image-docker-hub
+      params:
+        image: image/image.tar
