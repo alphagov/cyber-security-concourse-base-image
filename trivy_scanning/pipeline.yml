@@ -1,0 +1,7 @@
+resources:
+  - name: every-hour-resource
+    type: time
+    icon: clock-outline
+    source:
+      interval: 1h
+
