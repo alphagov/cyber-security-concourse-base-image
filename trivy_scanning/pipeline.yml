@@ -32,4 +32,8 @@ jobs:
           run:
             path: trivy
             args:
-              ["--light", "--exit-code", "1", "--input", "concourse-base-image-docker-hub/image.tar"]
+              - --light
+              - --exit-code
+              - 1
+              - --input
+              - concourse-base-image-docker-hub/image.tar
