@@ -5,3 +5,22 @@ resources:
     source:
       interval: 1h
 
+jobs:
+  - name: scan-cyber-base-image
+    serial: true
+    plan:
+      - get: every-hour-resource
+        trigger: true
+      - task: scan
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source: {repository: aquasec/trivy}
+          params:
+            TRIVY_AUTH_URL: https://registry.hub.docker.com
+            TRIVY_USERNAME: ((dockerhub_username))
+            TRIVY_PASSWORD: ((dockerhub_password))
+          run:
+            path: trivy
+            args: ["--light", "--exit-code 1", "gdscyber:cyber-security-concourse-base-image"]
