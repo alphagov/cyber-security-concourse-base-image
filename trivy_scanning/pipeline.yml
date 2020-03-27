@@ -33,6 +33,8 @@ jobs:
             path: trivy
             args:
               - --light
+              - --ignore-unfixed # Ignores vulns that can't be fixed by updating package
+                # This might miss severe vulnerabilities!
               - --exit-code
               - 1
               - --input
