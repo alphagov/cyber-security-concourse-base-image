@@ -23,4 +23,5 @@ jobs:
             TRIVY_PASSWORD: ((dockerhub_password))
           run:
             path: trivy
-            args: ["--light", "--exit-code 1", "gdscyber:cyber-security-concourse-base-image"]
+            args:
+              ["--light", "--exit-code", "1", "gdscyber:cyber-security-concourse-base-image"]
