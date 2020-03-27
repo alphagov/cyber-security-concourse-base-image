@@ -4,11 +4,21 @@ resources:
     icon: clock-outline
     source:
       interval: 1h
+  - name: concourse-base-image-docker-hub
+    type: registry-image
+    source:
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
+      repository: gdscyber/cyber-security-concourse-base-image
+
 
 jobs:
   - name: scan-cyber-base-image
     serial: true
     plan:
+      - get: concourse-base-image-docker-hub
+        params:
+          format: oci # Fetch image as a tarball for trivy's --input option
       - get: every-hour-resource
         trigger: true
       - task: scan
@@ -17,11 +27,9 @@ jobs:
           image_resource:
             type: registry-image
             source: {repository: aquasec/trivy}
-          params:
-            TRIVY_AUTH_URL: https://registry.hub.docker.com
-            TRIVY_USERNAME: ((dockerhub_username))
-            TRIVY_PASSWORD: ((dockerhub_password))
+          inputs:
+            - name: concourse-base-image-docker-hub
           run:
             path: trivy
             args:
-              ["--light", "--exit-code", "1", "gdscyber:cyber-security-concourse-base-image"]
+              ["--light", "--exit-code", "1", "--input", "concourse-base-image-docker-hub/image.tar"]
