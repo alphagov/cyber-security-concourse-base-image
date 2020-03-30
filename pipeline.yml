@@ -63,7 +63,6 @@ jobs:
     plan:
     - get: concourse-http-api-resource-image-git
       trigger: true
-
     - task: build_http_api_resource
       privileged: true
       config:
@@ -73,7 +72,10 @@ jobs:
           source:
             repository: vito/oci-build-task
         params:
+          cache_from: concourse-http-api-resource-image-git
           CONTEXT: concourse-http-api-resource-image-git/http-api-resource
+        caches:
+          - path: .
         inputs:
         - name: concourse-http-api-resource-image-git
         outputs:
