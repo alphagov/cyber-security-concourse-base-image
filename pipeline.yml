@@ -9,7 +9,7 @@ resources:
   - name: concourse-http-api-resource-image-git
     type: git
     source:
-      branch: master
+      branch: add-http-api-resource
       paths:
         - http-api-resource
       private_key: ((base-image-git-priv-key))
