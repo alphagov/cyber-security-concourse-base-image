@@ -1,0 +1,46 @@
+config:
+  target: "<insert kinesis data stream name here>"
+  kinesis:
+    region: "eu-west-2"
+  phases:
+    - duration: 10
+      arrivalRate: 800 # generate 80,000 requests
+  engines:
+    kinesis: {}
+
+scenarios:
+  - name: "Push to stream"
+    engine: kinesis
+    flow:
+      - count: 1
+      - putRecord:
+          partitionKey: "testPk"
+          data: '{"messageType":"DATA_MESSAGE","owner":"HOSTWHO","logGroup":"LOGWHAT","logStream":"samplelogstream","logEvents":[{"id":"0","timestamp":unix_time_goes_here,"message":"2 123456789010 eni-abc123de 172.31.16.139 172.31.16.21 52964 31062 61 40 1564564888 1564564935 REJECT OK"}]}'
+      - putRecord:
+          partitionKey: "testPk"
+          data: '{"messageType":"DATA_MESSAGE","owner":"HOSTWHO","logGroup":"LOGWHAT","logStream":"samplelogstream","logEvents":[{"id":"0","timestamp":unix_time_goes_here,"message":"2 123456789010 eni-abc123de 172.31.16.139 172.31.16.21 52964 31062 61 40 1564564888 1564564935 REJECT OK"}]}'
+      - putRecord:
+          partitionKey: "testPk"
+          data: '{"messageType":"DATA_MESSAGE","owner":"HOSTWHO","logGroup":"LOGWHAT","logStream":"samplelogstream","logEvents":[{"id":"0","timestamp":unix_time_goes_here,"message":"2 123456789010 eni-abc123de 172.31.16.139 172.31.16.21 52964 31062 61 40 1564564888 1564564935 REJECT OK"}]}'
+      - putRecord:
+          partitionKey: "testPk"
+          data: '{"messageType":"DATA_MESSAGE","owner":"HOSTWHO","logGroup":"LOGWHAT","logStream":"samplelogstream","logEvents":[{"id":"0","timestamp":unix_time_goes_here,"message":"2 123456789010 eni-abc123de 172.31.16.139 172.31.16.21 52964 31062 61 40 1564564888 1564564935 REJECT OK"}]}'
+      - putRecord:
+          partitionKey: "testPk"
+          data: '{"messageType":"DATA_MESSAGE","owner":"HOSTWHO","logGroup":"LOGWHAT","logStream":"samplelogstream","logEvents":[{"id":"0","timestamp":unix_time_goes_here,"message":"2 123456789010 eni-abc123de 172.31.16.139 172.31.16.21 52964 31062 61 40 1564564888 1564564935 REJECT OK"}]}'
+      - putRecord:
+          partitionKey: "testPk"
+          data: '{"messageType":"DATA_MESSAGE","owner":"HOSTWHO","logGroup":"LOGWHAT","logStream":"samplelogstream","logEvents":[{"id":"0","timestamp":unix_time_goes_here,"message":"2 123456789010 eni-abc123de 172.31.16.139 172.31.16.21 52964 31062 61 40 1564564888 1564564935 REJECT OK"}]}'
+      - putRecord:
+          partitionKey: "testPk"
+          data: '{"messageType":"DATA_MESSAGE","owner":"HOSTWHO","logGroup":"LOGWHAT","logStream":"samplelogstream","logEvents":[{"id":"0","timestamp":unix_time_goes_here,"message":"2 123456789010 eni-abc123de 172.31.16.139 172.31.16.21 52964 31062 61 40 1564564888 1564564935 REJECT OK"}]}'
+      - putRecord:
+          partitionKey: "testPk"
+          data: '{"messageType":"DATA_MESSAGE","owner":"HOSTWHO","logGroup":"LOGWHAT","logStream":"samplelogstream","logEvents":[{"id":"0","timestamp":unix_time_goes_here,"message":"2 123456789010 eni-abc123de 172.31.16.139 172.31.16.21 52964 31062 61 40 1564564888 1564564935 REJECT OK"}]}'
+      - putRecord:
+          partitionKey: "testPk"
+          data: '{"messageType":"DATA_MESSAGE","owner":"HOSTWHO","logGroup":"LOGWHAT","logStream":"samplelogstream","logEvents":[{"id":"0","timestamp":unix_time_goes_here,"message":"2 123456789010 eni-abc123de 172.31.16.139 172.31.16.21 52964 31062 61 40 1564564888 1564564935 REJECT OK"}]}'
+      - putRecord:
+          partitionKey: "testPk"
+          data: '{"messageType":"DATA_MESSAGE","owner":"HOSTWHO","logGroup":"LOGWHAT","logStream":"samplelogstream","logEvents":[{"id":"0","timestamp":unix_time_goes_here,"message":"2 123456789010 eni-abc123de 172.31.16.139 172.31.16.21 52964 31062 61 40 1564564888 1564564935 REJECT OK"}]}'
+      - think: 1
