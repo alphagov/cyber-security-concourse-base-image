@@ -63,7 +63,7 @@ jobs:
     plan:
     - get: concourse-http-api-resource-image-git
       trigger: true
-    - task: build_http_api_resource
+    - task: build
       privileged: true
       config:
         platform: linux
