@@ -6,6 +6,8 @@ The main image in this repository is the base image that should be used by all c
 
 To extend upon the main image, use `FROM gdscyber/cyber-security-concourse-base-image`.
 
+Sometimes you may want to use an image that can be standardised but does not use the majority of things installed on the base image, in this case you can use a different Docker image.
+
 # other base images
 
-There are a number of different directories in this repository which contain different base images that are generic and can be reused but do not use the base image for the reasons mentioned above.
+There are a number of different directories in this repository which contain different base images that are generic and can be reused but do not use the base image for the reason mentioned above.
