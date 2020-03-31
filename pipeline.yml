@@ -8,7 +8,7 @@ resources:
   - name: load-testing-image-git
     type: git
     source:
-      branch: load-test-image
+      branch: master
       paths:
         - load_testing
       uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
