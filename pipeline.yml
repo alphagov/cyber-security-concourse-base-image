@@ -3,6 +3,8 @@ resources:
     type: git
     source:
       branch: master
+      paths:
+        - Dockerfile
       uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
 
   - name: load-testing-image-git
@@ -10,8 +12,16 @@ resources:
     source:
       branch: master
       paths:
-        - load_testing
+        - load_testing/Dockerfile
       uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
+
+  - name: github-security-dashboard-image-git
+    type: git
+    source:
+      branch: master
+      paths:
+        - Dockerfile
+      uri: https://github.com/alphagov/cyber-security-security-advisory-dashboard.git
 
   - name: concourse-base-image-docker-hub
     type: registry-image
@@ -26,6 +36,12 @@ resources:
       <<: *build-image-source
       repository: gdscyber/artillery-load-testing
 
+  - name: github-security-dashboard-image-docker-hub
+    type: registry-image
+    source:
+      <<: *build-image-source
+      repository: gdscyber/sec_adv
+
 jobs:
   - name: build_base_docker_image
     serial: false
@@ -35,7 +51,7 @@ jobs:
 
     - task: build
       privileged: true
-      config:
+      config: &build-image-config
         platform: linux
         image_resource:
           type: registry-image
@@ -63,11 +79,7 @@ jobs:
     - task: build
       privileged: true
       config:
-        platform: linux
-        image_resource:
-          type: registry-image
-          source:
-            repository: vito/oci-build-task
+        <<: *build-image-config
         params:
           CONTEXT: load-testing-image-git/load_testing
         inputs:
@@ -78,5 +90,29 @@ jobs:
           path: build
 
     - put: load-testing-image-docker-hub
+      params:
+        image: image/image.tar
+
+
+  - name: build_base_docker_image
+    serial: false
+    plan:
+    - get: github-security-dashboard-image-git
+      trigger: true
+
+    - task: build
+      privileged: true
+      config:
+        <<: *build-image-config
+        params:
+          CONTEXT: github-security-dashboard-image-git/
+        inputs:
+        - name: github-security-dashboard-image-git
+        outputs:
+        - name: image
+        run:
+          path: build
+
+    - put: github-security-dashboard-image-docker-hub
       params:
         image: image/image.tar
