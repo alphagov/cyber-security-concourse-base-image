@@ -3,31 +3,28 @@ resources:
     type: git
     source:
       branch: master
-      private_key: ((base-image-git-priv-key))
-      uri: git@github.com:alphagov/cyber-security-concourse-base-image.git
+      uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
 
-  - name: concourse-http-api-resource-image-git
+  - name: load-testing-image-git
     type: git
     source:
-      branch: add-http-api-resource
+      branch: master
       paths:
-        - http-api-resource
-      private_key: ((base-image-git-priv-key))
-      uri: git@github.com:alphagov/cyber-security-concourse-base-image.git
+        - load_testing
+      uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
 
   - name: concourse-base-image-docker-hub
     type: registry-image
-    source:
+    source: &build-image-source
       username: ((dockerhub_username))
       password: ((dockerhub_password))
       repository: gdscyber/cyber-security-concourse-base-image
 
-  - name: http-api-resource-image-docker-hub
+  - name: load-testing-image-docker-hub
     type: registry-image
     source:
-      username: ((dockerhub_username))
-      password: ((dockerhub_password))
-      repository: gdscyber/http-api-resource
+      <<: *build-image-source
+      repository: gdscyber/artillery-load-testing
 
 jobs:
   - name: build_base_docker_image
@@ -58,10 +55,10 @@ jobs:
         image: image/image.tar
 
 
-  - name: build_http_api_docker_image
+  - name: build_load_testing_docker_image
     serial: false
     plan:
-    - get: concourse-http-api-resource-image-git
+    - get: load-testing-image-git
       trigger: true
     - task: build
       privileged: true
@@ -72,17 +69,14 @@ jobs:
           source:
             repository: vito/oci-build-task
         params:
-          cache_from: concourse-http-api-resource-image-git
-          CONTEXT: concourse-http-api-resource-image-git/http-api-resource
-        caches:
-          - path: .
+          CONTEXT: load-testing-image-git/load_tesing
         inputs:
-        - name: concourse-http-api-resource-image-git
+        - name: load-testing-image-git
         outputs:
         - name: image
         run:
           path: build
 
-    - put: http-api-resource-image-docker-hub
+    - put: load-testing-image-docker-hub
       params:
         image: image/image.tar
