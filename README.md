@@ -9,3 +9,7 @@ To extend upon the main image, use `FROM gdscyber/cyber-security-concourse-base-
 # other base images
 
 There are a number of different directories in this repository which contain different base images that are generic and can be reused but do not use the base image for the reasons mentioned above.
+
+# Dockerfiles that use the base image
+
+Other repositories that use this base image will contain their own Dockerfile in the project repo. The pipeline within this repository will check for changes to those Dockerfiles and update them in docker hub so they are always up to date.
