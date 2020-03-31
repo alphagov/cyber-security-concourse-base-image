@@ -94,7 +94,7 @@ jobs:
         image: image/image.tar
 
 
-  - name: build_base_docker_image
+  - name: build_github_security_dashboard_docker_image
     serial: false
     plan:
     - get: github-security-dashboard-image-git
