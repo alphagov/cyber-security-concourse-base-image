@@ -1,0 +1,13 @@
+config:
+  target: "https://example.com"
+  phases:
+    - duration: 10
+      arrivalRate: 800 # 80,000 requests
+scenarios:
+  - flow:
+      - get:
+          url: "/"
+      - post:
+          url: "/resource"
+          json:
+            hello: "world"
