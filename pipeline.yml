@@ -23,6 +23,15 @@ resources:
         - Dockerfile
       uri: https://github.com/alphagov/cyber-security-security-advisory-dashboard.git
 
+  - name: cloudwatch-health-image-git
+    type: git
+    source:
+      branch: master
+      paths:
+        - docker/concourse-worker-health/Dockerfile
+      uri: https://github.com/alphagov/cyber-security-cloudwatch-config.git
+
+
   - name: concourse-base-image-docker-hub
     type: registry-image
     source: &build-image-source
@@ -41,6 +50,12 @@ resources:
     source:
       <<: *build-image-source
       repository: gdscyber/sec_adv
+
+  - name: cloudwatch-health-image-docker-hub
+    type: registry-image
+    source:
+      <<: *build-image-source
+      repository: gdscyber/concourse-worker-health
 
 jobs:
   - name: build_base_docker_image
@@ -114,5 +129,29 @@ jobs:
           path: build
 
     - put: github-security-dashboard-image-docker-hub
+      params:
+        image: image/image.tar
+
+
+  - name: cloudwatch_health_docker_image
+    serial: false
+    plan:
+    - get: cloudwatch-health-image-git
+      trigger: true
+
+    - task: build
+      privileged: true
+      config:
+        <<: *build-image-config
+        params:
+          CONTEXT: cloudwatch-health-image-git/docker/concourse-worker-health/
+        inputs:
+        - name: cloudwatch-health-image-git
+        outputs:
+        - name: image
+        run:
+          path: build
+
+    - put: cloudwatch-health-image-docker-hub
       params:
         image: image/image.tar
