@@ -8,7 +8,7 @@ resources:
   - name: load-testing-image-git
     type: git
     source:
-      branch: master
+      branch: load-test-image
       paths:
         - load_testing
       uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
@@ -69,7 +69,7 @@ jobs:
           source:
             repository: vito/oci-build-task
         params:
-          CONTEXT: load-testing-image-git/load_tesing
+          CONTEXT: load-testing-image-git/load_testing
         inputs:
         - name: load-testing-image-git
         outputs:
