@@ -6,6 +6,8 @@ if [[ -n "$ASSUMED_SESSION" ]]; then
   unset AWS_SECRET_ACCESS_KEY
   unset AWS_SESSION_TOKEN
   unset ASSUMED_SESSION
+else
+  echo "not unsetting variables"
 fi
 
 role_arn="$1"
