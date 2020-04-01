@@ -1,4 +1,31 @@
+health_status_notify: &health_status_notify
+  put: health-notification
+
+
+resource_types:
+  - name: http-api
+    type: docker-image
+    source:
+      repository: gdscyber/http-api-resource
+
+
 resources:
+  - name: health-notification
+    type: http-api
+    source:
+      uri: https://((health_host_prod))/?alert_type=concourse$&alert_name=health
+      method: POST
+      headers:
+        Authorization: "Bearer ((health_token_prod))"
+      json:
+        service: "{service}"
+        state: "{health}"
+        message: "{message}"
+        pipeline: "{BUILD_PIPELINE_NAME}"
+        job: "{BUILD_JOB_NAME}"
+        build_number: "{BUILD_NAME}"
+      service: "Docker Build Pipeline"
+
   - name: concourse-base-image-git
     type: git
     source:
@@ -80,10 +107,31 @@ jobs:
         - name: image
         run:
           path: build
+      on_success:
+        <<: *health_status_notify
+        params:
+          message: "Cyber security concourse base image build completed successfully."
+          health: healthy
+      on_failure:
+        <<: *health_status_notify
+        params:
+          message: "Cyber security concourse base image build failed."
+          health: unhealthy
+
 
     - put: concourse-base-image-docker-hub
       params:
         image: image/image.tar
+      on_success:
+        <<: *health_status_notify
+        params:
+          message: "Cyber security concourse base image Docker Hub upload completed successfully."
+          health: healthy
+      on_failure:
+        <<: *health_status_notify
+        params:
+          message: "Cyber security concourse base image Docker Hub upload failed."
+          health: unhealthy
 
 
   - name: build_load_testing_docker_image
@@ -103,10 +151,30 @@ jobs:
         - name: image
         run:
           path: build
+      on_success:
+        <<: *health_status_notify
+        params:
+          message: "Load testing image build completed successfully."
+          health: healthy
+      on_failure:
+        <<: *health_status_notify
+        params:
+          message: "Load testing image build failed."
+          health: unhealthy
 
     - put: load-testing-image-docker-hub
       params:
         image: image/image.tar
+      on_success:
+        <<: *health_status_notify
+        params:
+          message: "Load testing image Docker Hub upload completed successfully."
+          health: healthy
+      on_failure:
+        <<: *health_status_notify
+        params:
+          message: "Load testing image Docker Hub upload failed."
+          health: unhealthy
 
 
   - name: build_github_security_dashboard_docker_image
@@ -127,10 +195,30 @@ jobs:
         - name: image
         run:
           path: build
+      on_success:
+        <<: *health_status_notify
+        params:
+          message: "GitHub security dashboard image build completed successfully."
+          health: healthy
+      on_failure:
+        <<: *health_status_notify
+        params:
+          message: "GitHub security dashboard image build failed."
+          health: unhealthy
 
     - put: github-security-dashboard-image-docker-hub
       params:
         image: image/image.tar
+      on_success:
+        <<: *health_status_notify
+        params:
+          message: "GitHub security dashboard image Docker Hub upload completed successfully."
+          health: healthy
+      on_failure:
+        <<: *health_status_notify
+        params:
+          message: "GitHub security dashboard image Docker Hub upload failed."
+          health: unhealthy
 
 
   - name: cloudwatch_health_docker_image
@@ -151,7 +239,27 @@ jobs:
         - name: image
         run:
           path: build
+      on_success:
+        <<: *health_status_notify
+        params:
+          message: "Cloudwatch health image build completed successfully."
+          health: healthy
+      on_failure:
+        <<: *health_status_notify
+        params:
+          message: "Cloudwatch health image build failed."
+          health: unhealthy
 
     - put: cloudwatch-health-image-docker-hub
       params:
         image: image/image.tar
+      on_success:
+        <<: *health_status_notify
+        params:
+          message: "Cloudwatch health image Docker Hub upload completed successfully."
+          health: healthy
+      on_failure:
+        <<: *health_status_notify
+        params:
+          message: "Cloudwatch health image Docker Hub upload failed."
+          health: unhealthy
