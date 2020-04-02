@@ -34,8 +34,16 @@ jobs:
             args:
               - --light
               - --ignore-unfixed # Ignores vulns that can't be fixed by updating package
-                # This might miss severe vulnerabilities!
+              # This might miss severe vulnerabilities!
+              - --quiet
               - --exit-code
               - 1
+              - --severity
+              - CRITICAL
               - --input
               - concourse-base-image-docker-hub/image.tar
+          #params:
+          #  TRIVY_AUTH_URL: 'https://registry.hub.docker.com'
+          #  TRIVY_USERNAME: ((dockerhub_username))
+          #  TRIVY_PASSWORD: ((dockerhub_password))
+
