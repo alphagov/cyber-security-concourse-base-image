@@ -21,7 +21,7 @@ jobs:
           format: oci # Fetch image as a tarball for trivy's --input option
       - get: every-hour-resource
         trigger: true
-      - task: scan
+      - task: scan for CRITICAL severity vulnerabilities
         config:
           platform: linux
           image_resource:
@@ -39,11 +39,10 @@ jobs:
               - --exit-code
               - 1
               - --severity
-              - CRITICAL
+              - CRITICAL 
               - --input
               - concourse-base-image-docker-hub/image.tar
           #params:
           #  TRIVY_AUTH_URL: 'https://registry.hub.docker.com'
           #  TRIVY_USERNAME: ((dockerhub_username))
           #  TRIVY_PASSWORD: ((dockerhub_password))
-

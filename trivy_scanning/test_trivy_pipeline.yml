@@ -1,0 +1,80 @@
+task-config: &task-config # this can be replaced with the health-notification resource to notify condition of jobs
+  platform: linux
+  image_resource:
+    type: registry-image
+    source: { repository: busybox } # using for testing
+
+resources:
+  - name: trivy-image-to-scan-git
+    type: git
+    source:
+      branch: master
+      paths:
+        - Dockerfile
+        - bin
+      uri: https://github.com/gds-ahine/test-pipeline.git
+
+  - name: trivy-image-docker-hub
+    type: registry-image
+    source: &build-image-source
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
+      repository: gdscyber/ah-test-image
+
+
+jobs:
+  - name: build_and_scan_docker_image_for_vulnerabilities
+    serial: false
+    plan:
+    - get: trivy-image-to-scan-git
+      trigger: true
+
+    - task: build
+      privileged: true
+      config: &build-image-config
+        platform: linux
+        image_resource:
+          type: registry-image
+          source:
+            repository: vito/oci-build-task
+        params:
+          CONTEXT: trivy-image-to-scan-git/
+        inputs:
+        - name: trivy-image-to-scan-git
+        outputs:
+        - name: image
+        run:
+          path: build
+
+    - task: scan for CRITICAL severity vulnerabilities
+      config:
+        platform: linux
+        image_resource:
+          type: registry-image
+          source: {repository: aquasec/trivy}
+        inputs:
+          - name: image
+        run:
+          path: trivy
+          args:
+            - --light
+            - --ignore-unfixed # Ignores vulns that can't be fixed by updating package
+            # This might miss severe vulnerabilities!
+            - --quiet
+            - --exit-code
+            - 1
+            - --severity
+            - CRITICAL
+            - --input
+            - image/image.tar
+      on_success:
+        put: trivy-image-docker-hub
+        params:
+          image: image/image.tar
+      on_failure:
+        task: critical vulnerabilties detected
+        config:
+          << : *task-config
+          run:
+            path: echo
+            args: ["!!! Critical vulnerabilities detected !!!"]
