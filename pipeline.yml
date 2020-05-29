@@ -65,7 +65,7 @@ resources:
       private_key: ((gsuite-splunk-private-key))
       paths:
         - gds-gsuite-govuk-paas/Dockerfile
-      uri: https://github.com/alphagov/cyber-security-splunk-apps.git
+      uri: git@github.com:alphagov/cyber-security-splunk-apps.git
 
   - name: csls-image-git
     type: git
@@ -293,21 +293,7 @@ jobs:
           message: "Cloudwatch health image Docker Hub upload failed."
           health: unhealthy
 
-  - name: build_gsuite_splunk_docker_image
-    serial: false
-    plan:
-    - get: gsuite-splunk-image-git
-      trigger: true
-    - task: build
-      privileged: true
-      config:
-        <<: *build-image-config
-        params:
-          CONTEXT: gsuite-splunk-image-git/gds-gsuite-govuk-paas/
-        inputs:
-        - name: gsuite-splunk-image-git
-
- - name: csls_docker_image
+  - name: csls_docker_image
     serial: false
     plan:
     - get: csls-image-git
