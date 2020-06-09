@@ -8,6 +8,8 @@ To extend upon the main image, use `FROM gdscyber/cyber-security-concourse-base-
 
 Sometimes you may want to use an image that can be standardised but does not use the majority of things installed on the base image, in this case you can use a different Docker image.
 
+To view the concourse pipeline for this image: https://cd.gds-reliability.engineering/teams/cybersecurity-tools/pipelines/cyber-security-concourse-base-image
+
 # other base images
 
 There are a number of different directories in this repository which contain different base images that are generic and can be reused but do not use the base image for the reasons mentioned above.
