@@ -66,6 +66,8 @@ resources:
       private_key: ((gsuite-splunk-private-key))
       paths:
         - gds-gsuite-govuk-paas/Dockerfile
+        - gds-gsuite-govuk-paas/input-add-on-for-g-suite-app*
+        - gds-gsuite-govuk-paas/bin/*
       uri: git@github.com:alphagov/cyber-security-splunk-apps.git
 
   - name: csls-image-git
