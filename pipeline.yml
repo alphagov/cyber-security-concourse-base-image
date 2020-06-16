@@ -1,3 +1,4 @@
+---
 health_status_notify: &health_status_notify
   put: health-notification
 
@@ -117,268 +118,268 @@ jobs:
   - name: build_base_docker_image
     serial: false
     plan:
-    - get: concourse-base-image-git
-      trigger: true
+      - get: concourse-base-image-git
+        trigger: true
 
-    - task: build
-      privileged: true
-      config: &build-image-config
-        platform: linux
-        image_resource:
-          type: registry-image
-          source:
-            repository: vito/oci-build-task
-        params:
-          CONTEXT: concourse-base-image-git/
-        inputs:
-        - name: concourse-base-image-git
-        outputs:
-        - name: image
-        run:
-          path: build
-      on_success:
-        <<: *health_status_notify
-        params:
-          message: "Cyber security concourse base image build completed successfully."
-          health: healthy
-      on_failure:
-        <<: *health_status_notify
-        params:
-          message: "Cyber security concourse base image build failed."
-          health: unhealthy
+      - task: build
+        privileged: true
+        config: &build-image-config
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: vito/oci-build-task
+          params:
+            CONTEXT: concourse-base-image-git/
+          inputs:
+            - name: concourse-base-image-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Cyber security concourse base image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Cyber security concourse base image build failed."
+            health: unhealthy
 
 
-    - put: concourse-base-image-docker-hub
-      params:
-        image: image/image.tar
-      on_success:
-        <<: *health_status_notify
+      - put: concourse-base-image-docker-hub
         params:
-          message: "Cyber security concourse base image Docker Hub upload completed successfully."
-          health: healthy
-      on_failure:
-        <<: *health_status_notify
-        params:
-          message: "Cyber security concourse base image Docker Hub upload failed."
-          health: unhealthy
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Cyber security concourse base image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Cyber security concourse base image Docker Hub upload failed."
+            health: unhealthy
 
 
   - name: build_load_testing_docker_image
     serial: false
     plan:
-    - get: load-testing-image-git
-      trigger: true
-    - task: build
-      privileged: true
-      config:
-        <<: *build-image-config
-        params:
-          CONTEXT: load-testing-image-git/load_testing
-        inputs:
-        - name: load-testing-image-git
-        outputs:
-        - name: image
-        run:
-          path: build
-      on_success:
-        <<: *health_status_notify
-        params:
-          message: "Load testing image build completed successfully."
-          health: healthy
-      on_failure:
-        <<: *health_status_notify
-        params:
-          message: "Load testing image build failed."
-          health: unhealthy
+      - get: load-testing-image-git
+        trigger: true
+      - task: build
+        privileged: true
+        config:
+          <<: *build-image-config
+          params:
+            CONTEXT: load-testing-image-git/load_testing
+          inputs:
+            - name: load-testing-image-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Load testing image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Load testing image build failed."
+            health: unhealthy
 
-    - put: load-testing-image-docker-hub
-      params:
-        image: image/image.tar
-      on_success:
-        <<: *health_status_notify
+      - put: load-testing-image-docker-hub
         params:
-          message: "Load testing image Docker Hub upload completed successfully."
-          health: healthy
-      on_failure:
-        <<: *health_status_notify
-        params:
-          message: "Load testing image Docker Hub upload failed."
-          health: unhealthy
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Load testing image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Load testing image Docker Hub upload failed."
+            health: unhealthy
 
 
   - name: build_github_security_dashboard_docker_image
     serial: false
     plan:
-    - get: github-security-dashboard-image-git
-      trigger: true
+      - get: github-security-dashboard-image-git
+        trigger: true
 
-    - task: build
-      privileged: true
-      config:
-        <<: *build-image-config
-        params:
-          CONTEXT: github-security-dashboard-image-git/
-        inputs:
-        - name: github-security-dashboard-image-git
-        outputs:
-        - name: image
-        run:
-          path: build
-      on_success:
-        <<: *health_status_notify
-        params:
-          message: "GitHub security dashboard image build completed successfully."
-          health: healthy
-      on_failure:
-        <<: *health_status_notify
-        params:
-          message: "GitHub security dashboard image build failed."
-          health: unhealthy
+      - task: build
+        privileged: true
+        config:
+          <<: *build-image-config
+          params:
+            CONTEXT: github-security-dashboard-image-git/
+          inputs:
+            - name: github-security-dashboard-image-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "GitHub security dashboard image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "GitHub security dashboard image build failed."
+            health: unhealthy
 
-    - put: github-security-dashboard-image-docker-hub
-      params:
-        image: image/image.tar
-      on_success:
-        <<: *health_status_notify
+      - put: github-security-dashboard-image-docker-hub
         params:
-          message: "GitHub security dashboard image Docker Hub upload completed successfully."
-          health: healthy
-      on_failure:
-        <<: *health_status_notify
-        params:
-          message: "GitHub security dashboard image Docker Hub upload failed."
-          health: unhealthy
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "GitHub security dashboard image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "GitHub security dashboard image Docker Hub upload failed."
+            health: unhealthy
 
 
   - name: cloudwatch_health_docker_image
     serial: false
     plan:
-    - get: cloudwatch-health-image-git
-      trigger: true
+      - get: cloudwatch-health-image-git
+        trigger: true
 
-    - task: build
-      privileged: true
-      config:
-        <<: *build-image-config
-        params:
-          CONTEXT: cloudwatch-health-image-git/docker/concourse-worker-health/
-        inputs:
-        - name: cloudwatch-health-image-git
-        outputs:
-        - name: image
-        run:
-          path: build
-      on_success:
-        <<: *health_status_notify
-        params:
-          message: "Cloudwatch health image build completed successfully."
-          health: healthy
-      on_failure:
-        <<: *health_status_notify
-        params:
-          message: "Cloudwatch health image build failed."
-          health: unhealthy
+      - task: build
+        privileged: true
+        config:
+          <<: *build-image-config
+          params:
+            CONTEXT: cloudwatch-health-image-git/docker/concourse-worker-health/
+          inputs:
+            - name: cloudwatch-health-image-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Cloudwatch health image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Cloudwatch health image build failed."
+            health: unhealthy
 
-    - put: cloudwatch-health-image-docker-hub
-      params:
-        image: image/image.tar
-      on_success:
-        <<: *health_status_notify
+      - put: cloudwatch-health-image-docker-hub
         params:
-          message: "Cloudwatch health image Docker Hub upload completed successfully."
-          health: healthy
-      on_failure:
-        <<: *health_status_notify
-        params:
-          message: "Cloudwatch health image Docker Hub upload failed."
-          health: unhealthy
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Cloudwatch health image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Cloudwatch health image Docker Hub upload failed."
+            health: unhealthy
 
   - name: csls_docker_image
     serial: false
     plan:
-    - get: csls-image-git
-      trigger: true
+      - get: csls-image-git
+        trigger: true
 
-    - task: build
-      privileged: true
-      config: &build-image-config
-        platform: linux
-        image_resource:
-          type: registry-image
-          source:
-            repository: vito/oci-build-task
-        params:
-          CONTEXT: csls-image-git/config/concourse
-        inputs:
-        - name: csls-image-git
-        outputs:
-        - name: image
-        run:
-          path: build
-      on_success:
-        <<: *health_status_notify
-        params:
-          message: "CSLS image build completed successfully."
-          health: healthy
-      on_failure:
-        <<: *health_status_notify
-        params:
-          message: "CSLS image build failed."
-          health: unhealthy
+      - task: build
+        privileged: true
+        config: &build-image-config
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: vito/oci-build-task
+          params:
+            CONTEXT: csls-image-git/config/concourse
+          inputs:
+            - name: csls-image-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "CSLS image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "CSLS image build failed."
+            health: unhealthy
 
-    - put: csls-image-docker-hub
-      params:
-        image: image/image.tar
-      on_success:
-        <<: *health_status_notify
+      - put: csls-image-docker-hub
         params:
-          message: "CSLS image Docker Hub upload completed successfully."
-          health: healthy
-      on_failure:
-        <<: *health_status_notify
-        params:
-          message: "CSLS image Docker Hub upload failed."
-          health: unhealthy
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "CSLS image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "CSLS image Docker Hub upload failed."
+            health: unhealthy
 
 
   - name: build_gsuite_splunk_docker_image
     serial: false
     plan:
-    - get: gsuite-splunk-image-git
-      trigger: true
-    - task: build
-      privileged: true
-      config:
-        <<: *build-image-config
-        params:
-          CONTEXT: gsuite-splunk-image-git/gds-gsuite-govuk-paas/
-        inputs:
-        - name: gsuite-splunk-image-git
-        outputs:
-        - name: image
-        run:
-          path: build
-      on_success:
-        <<: *health_status_notify
-        params:
-          message: "Gsuite splunk image build completed successfully."
-          health: healthy
-      on_failure:
-        <<: *health_status_notify
-        params:
-          message: "Gsuite splunk image build failed."
-          health: unhealthy
+      - get: gsuite-splunk-image-git
+        trigger: true
+      - task: build
+        privileged: true
+        config:
+          <<: *build-image-config
+          params:
+            CONTEXT: gsuite-splunk-image-git/gds-gsuite-govuk-paas/
+          inputs:
+            - name: gsuite-splunk-image-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Gsuite splunk image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Gsuite splunk image build failed."
+            health: unhealthy
 
-    - put: gsuite-splunk-image-docker-hub
-      params:
-        image: image/image.tar
-      on_success:
-        <<: *health_status_notify
+      - put: gsuite-splunk-image-docker-hub
         params:
-          message: "Gsuite splunk image Docker Hub upload completed successfully."
-          health: healthy
-      on_failure:
-        <<: *health_status_notify
-        params:
-          message: "Gsuite splunk image Docker Hub upload failed."
-          health: unhealthy
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Gsuite splunk image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Gsuite splunk image Docker Hub upload failed."
+            health: unhealthy
