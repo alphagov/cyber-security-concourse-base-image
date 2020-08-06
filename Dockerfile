@@ -11,7 +11,7 @@ LABEL user="gdscyber"
 LABEL Name="cyber_concourse_pipeline"
 LABEL Version=0.0.1
 
-RUN yum groupinstall -y 'Development Tools' && amazon-linux-extras install -y python3.8 && yum install -y openssl-devel libffi-devel awscli jq unzip git zip gcc wget glibc-devel python38-devel && yum clean all
+RUN yum groupinstall -y 'Development Tools' && amazon-linux-extras install -y python3.8 && yum install -y openssl-devel libffi-devel awscli jq which unzip git zip gcc wget glibc-devel python38-devel && yum clean all
 
 # Python 3 encoding set
 ENV LANG C.UTF-8
