@@ -232,7 +232,7 @@ jobs:
 
       - task: build
         privileged: true
-        config: &build-image-config
+        config:
           platform: linux
           image_resource:
             type: registry-image
