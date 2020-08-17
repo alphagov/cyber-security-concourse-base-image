@@ -238,7 +238,7 @@ jobs:
             source:
               repository: vito/oci-build-task
           params:
-            CONTEXT: concourse-base-image-git-amazonlinux2/
+            CONTEXT: concourse-base-image-git-amazonlinux2/amazonlinux2
           inputs:
             - name: concourse-base-image-git-amazonlinux2
           outputs:
