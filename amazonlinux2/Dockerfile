@@ -21,10 +21,10 @@ RUN alternatives --install /usr/bin/python python /usr/bin/python3.8 1 && \
     alternatives --install /usr/bin/pip pip /usr/bin/pip3.8 1
 
 # Copy over AWS STS AssumeRole scripts
-COPY ../bin /usr/local/bin
+COPY bin /usr/local/bin
 RUN chmod +x /usr/local/bin/*.sh
 
 # install terraform
-ADD install_terraform.sh /tmp/install_terraform.sh
+ADD amazonlinux2/install_terraform.sh /tmp/install_terraform.sh
 WORKDIR /tmp
 RUN bash install_terraform.sh

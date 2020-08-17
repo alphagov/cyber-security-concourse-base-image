@@ -38,7 +38,7 @@ resources:
   - name: concourse-base-image-git-amazonlinux2
     type: git
     source:
-      branch: master
+      branch: amazonlinux2
       paths:
         - amazonlinux2/Dockerfile
       uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
@@ -238,13 +238,13 @@ jobs:
             source:
               repository: vito/oci-build-task
           params:
-            CONTEXT: concourse-base-image-git-amazonlinux2/amazonlinux2
+            CONTEXT: concourse-base-image-git-amazonlinux2
           inputs:
             - name: concourse-base-image-git-amazonlinux2
           outputs:
             - name: image
           run:
-            path: build
+            path: build -f amazonlinux2/Dockerfile .
         on_success:
           <<: *health_status_notify
           params:
