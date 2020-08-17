@@ -97,9 +97,8 @@ resources:
   - name: concourse-base-image-docker-hub-amazonlinux2
     type: registry-image
     source:
+      <<: *build-image-source
       tag: amazonlinux2
-      username: ((dockerhub_username))
-      password: ((dockerhub_password))
       repository: gdscyber/cyber-security-concourse-base-image
 
   - name: load-testing-image-docker-hub
