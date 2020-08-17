@@ -238,13 +238,13 @@ jobs:
             source:
               repository: vito/oci-build-task
           params:
-            CONTEXT: concourse-base-image-git-amazonlinux2
+            CONTEXT: concourse-base-image-git-amazonlinux2/amazonlinux2
           inputs:
             - name: concourse-base-image-git-amazonlinux2
           outputs:
             - name: image
           run:
-            path: build -f amazonlinux2/Dockerfile .
+            path: build
         on_success:
           <<: *health_status_notify
           params:

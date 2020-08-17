@@ -25,6 +25,6 @@ COPY bin /usr/local/bin
 RUN chmod +x /usr/local/bin/*.sh
 
 # install terraform
-ADD amazonlinux2/install_terraform.sh /tmp/install_terraform.sh
+ADD install_terraform.sh /tmp/install_terraform.sh
 WORKDIR /tmp
 RUN bash install_terraform.sh
