@@ -134,6 +134,18 @@ resources:
       <<: *build-image-source
       repository: gdscyber/csls-concourse
 
+  - name: cyber-chalice-image-docker-hub
+    type: registry-image
+    source:
+      <<: *build-image-source
+      repository: gdscyber/cyber-chalice
+
+  - name: csw-concourse-worker-image-docker-hub
+    type: registry-image
+    source:
+      <<: *build-image-source
+      repository: gdscyber/csw-concourse-worker
+
 jobs:
   - name: build_base_docker_image
     serial: false
