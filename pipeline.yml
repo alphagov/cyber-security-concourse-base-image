@@ -415,3 +415,87 @@ jobs:
           params:
             message: "Gsuite splunk image Docker Hub upload failed."
             health: unhealthy
+
+  - name: build_cyber_chalice_docker_image
+    serial: false
+    plan:
+      - get: cyber-chalice-git
+        trigger: true
+      - task: build
+        privileged: true
+        config:
+          <<: *build-image-config
+          params:
+            CONTEXT: cyber-chalice-git/dockerfiles/chalice/
+          inputs:
+            - name: cyber-chalice-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "cyber-chalice image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "cyber-chalice image build failed."
+            health: unhealthy
+
+      - put: cyber-chalice-image-docker-hub
+        params:
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "cyber-chalice image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "cyber-chalice image Docker Hub upload failed."
+            health: unhealthy
+
+  - name: build_csw_concourse_worker_docker_image
+    serial: false
+    plan:
+      - get: csw-image-git
+        trigger: true
+      - task: build
+        privileged: true
+        config:
+          <<: *build-image-config
+          params:
+            CONTEXT: csw-image-git/dockerfiles/csw/
+          inputs:
+            - name: csw-image-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "csw-concourse-worker image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "csw-concourse-worker image build failed."
+            health: unhealthy
+
+      - put: csw-concourse-worker-image-docker-hub
+        params:
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "csw-concourse-worker image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "csw-concourse-worker image Docker Hub upload failed."
+            health: unhealthy
