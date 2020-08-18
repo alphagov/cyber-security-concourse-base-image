@@ -106,6 +106,15 @@ resources:
       private_key: ((pipeline-git-priv-key))
       uri: git@github.com:alphagov/cyber-security-cloudwatch-config.git
 
+  - name: http-api-resource-git
+    type: git
+    source:
+      branch: master
+      paths:
+        - docker/http-api-resource/Dockerfile
+      private_key: ((pipeline-git-priv-key))
+      uri: git@github.com:alphagov/cyber-security-cloudwatch-config.git
+
   - name: concourse-base-image-docker-hub
     type: registry-image
     source: &build-image-source
