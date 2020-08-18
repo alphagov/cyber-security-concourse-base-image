@@ -155,6 +155,12 @@ resources:
       <<: *build-image-source
       repository: gdscyber/csw-concourse-worker
 
+  - name: concourse-worker-health-image-docker-hub
+    type: registry-image
+    source:
+      <<: *build-image-source
+      repository: gdscyber/concourse-worker-health
+
 jobs:
   - name: build_base_docker_image
     serial: false
