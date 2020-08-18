@@ -170,6 +170,12 @@ resources:
       <<: *build-image-source
       repository: gdscyber/concourse-worker-health
 
+  - name: http-api-resource-image-docker-hub
+    type: registry-image
+    source:
+      <<: *build-image-source
+      repository: gdscyber/http-api-resource
+
 jobs:
   - name: build_base_docker_image
     serial: false
