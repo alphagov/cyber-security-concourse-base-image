@@ -35,6 +35,14 @@ resources:
         - Dockerfile
       uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
 
+  - name: concourse-base-image-git-amazonlinux2
+    type: git
+    source:
+      branch: master
+      paths:
+        - amazonlinux2/Dockerfile
+      uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
+
   - name: load-testing-image-git
     type: git
     source:
@@ -84,6 +92,13 @@ resources:
     source: &build-image-source
       username: ((dockerhub_username))
       password: ((dockerhub_password))
+      repository: gdscyber/cyber-security-concourse-base-image
+
+  - name: concourse-base-image-docker-hub-amazonlinux2
+    type: registry-image
+    source:
+      <<: *build-image-source
+      tag: amazonlinux2
       repository: gdscyber/cyber-security-concourse-base-image
 
   - name: load-testing-image-docker-hub
@@ -206,6 +221,54 @@ jobs:
           <<: *health_status_notify
           params:
             message: "Load testing image Docker Hub upload failed."
+            health: unhealthy
+
+  - name: build_base_docker_image_amazonlinux2
+    serial: false
+    plan:
+      - get: concourse-base-image-git-amazonlinux2
+        trigger: true
+
+      - task: build
+        privileged: true
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: vito/oci-build-task
+          params:
+            CONTEXT: concourse-base-image-git-amazonlinux2/amazonlinux2
+          inputs:
+            - name: concourse-base-image-git-amazonlinux2
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Cyber security concourse base image (Amazon Linux 2) build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Cyber security concourse base image (Amazon Linux 2) build failed."
+            health: unhealthy
+
+
+      - put: concourse-base-image-docker-hub-amazonlinux2
+        params:
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Cyber security concourse base image (Amazon Linux 2) Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Cyber security concourse base image (Amazon Linux 2) Docker Hub upload failed."
             health: unhealthy
 
 
