@@ -38,7 +38,7 @@ resources:
   - name: concourse-base-image-git-amazonlinux2
     type: git
     source:
-      branch: amazonlinux2
+      branch: master
       paths:
         - amazonlinux2/Dockerfile
       uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
