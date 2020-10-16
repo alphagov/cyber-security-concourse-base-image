@@ -186,6 +186,8 @@ jobs:
     plan:
       - get: load-testing-image-git
         trigger: true
+      - get: concourse-base-image-git
+        trigger: true
       - task: build
         privileged: true
         config:
@@ -228,7 +230,8 @@ jobs:
     plan:
       - get: concourse-base-image-git-amazonlinux2
         trigger: true
-
+      - get: concourse-base-image-git
+        trigger: true
       - task: build
         privileged: true
         config:
@@ -277,7 +280,8 @@ jobs:
     plan:
       - get: github-security-dashboard-image-git
         trigger: true
-
+      - get: concourse-base-image-git
+          trigger: true
       - task: build
         privileged: true
         config:
@@ -321,7 +325,8 @@ jobs:
     plan:
       - get: cloudwatch-health-image-git
         trigger: true
-
+      - get: concourse-base-image-git
+          trigger: true
       - task: build
         privileged: true
         config:
@@ -364,7 +369,8 @@ jobs:
     plan:
       - get: csls-image-git
         trigger: true
-
+      - get: concourse-base-image-git
+          trigger: true
       - task: build
         privileged: true
         config: &build-image-config
@@ -412,6 +418,8 @@ jobs:
     plan:
       - get: gsuite-splunk-image-git
         trigger: true
+      - get: concourse-base-image-git
+          trigger: true
       - task: build
         privileged: true
         config:
