@@ -188,6 +188,8 @@ jobs:
         trigger: true
       - get: concourse-base-image-git
         trigger: true
+        passed:
+          - build_base_docker_image
       - task: build
         privileged: true
         config:
@@ -232,6 +234,8 @@ jobs:
         trigger: true
       - get: concourse-base-image-git
         trigger: true
+        passed:
+          - build_base_docker_image
       - task: build
         privileged: true
         config:
@@ -282,6 +286,8 @@ jobs:
         trigger: true
       - get: concourse-base-image-git
           trigger: true
+          passed:
+            - build_base_docker_image
       - task: build
         privileged: true
         config:
@@ -327,6 +333,8 @@ jobs:
         trigger: true
       - get: concourse-base-image-git
           trigger: true
+          passed:
+            - build_base_docker_image
       - task: build
         privileged: true
         config:
@@ -371,6 +379,8 @@ jobs:
         trigger: true
       - get: concourse-base-image-git
           trigger: true
+          passed:
+            - build_base_docker_image
       - task: build
         privileged: true
         config: &build-image-config
@@ -420,6 +430,8 @@ jobs:
         trigger: true
       - get: concourse-base-image-git
           trigger: true
+          passed:
+            - build_base_docker_image
       - task: build
         privileged: true
         config:
