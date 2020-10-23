@@ -132,7 +132,7 @@ resources:
       repository: gdscyber/csls-concourse
 
 jobs:
-  - name: build_base_docker_image
+  - name: build-base-docker-image
     serial: false
     plan:
       - get: concourse-base-image-git
@@ -181,7 +181,7 @@ jobs:
             health: unhealthy
 
 
-  - name: build_load_testing_docker_image
+  - name: build-load-testing-docker-image
     serial: false
     plan:
       - get: load-testing-image-git
@@ -189,7 +189,7 @@ jobs:
       - get: concourse-base-image-git
         trigger: true
         passed:
-          - build_base_docker_image
+        - build-base-docker-image
       - task: build
         privileged: true
         config:
@@ -227,7 +227,7 @@ jobs:
             message: "Load testing image Docker Hub upload failed."
             health: unhealthy
 
-  - name: build_base_docker_image_amazonlinux2
+  - name: build-base-docker-image-amazonlinux2
     serial: false
     plan:
       - get: concourse-base-image-git-amazonlinux2
@@ -235,7 +235,7 @@ jobs:
       - get: concourse-base-image-git
         trigger: true
         passed:
-          - build_base_docker_image
+        - build-load-testing-docker-image
       - task: build
         privileged: true
         config:
@@ -279,15 +279,15 @@ jobs:
             health: unhealthy
 
 
-  - name: build_github_security_dashboard_docker_image
+  - name: build-github-security-dashboard-docker-image
     serial: false
     plan:
       - get: github-security-dashboard-image-git
         trigger: true
       - get: concourse-base-image-git
-          trigger: true
-          passed:
-            - build_base_docker_image
+        trigger: true
+        passed:
+        - build-base-docker-image-amazonlinux2
       - task: build
         privileged: true
         config:
@@ -326,15 +326,15 @@ jobs:
             health: unhealthy
 
 
-  - name: cloudwatch_health_docker_image
+  - name: cloudwatch-health-docker-image
     serial: false
     plan:
       - get: cloudwatch-health-image-git
         trigger: true
       - get: concourse-base-image-git
-          trigger: true
-          passed:
-            - build_base_docker_image
+        trigger: true
+        passed:
+        - build-github-security-dashboard-docker-image
       - task: build
         privileged: true
         config:
@@ -372,15 +372,15 @@ jobs:
             message: "Cloudwatch health image Docker Hub upload failed."
             health: unhealthy
 
-  - name: csls_docker_image
+  - name: csls-docker-image
     serial: false
     plan:
       - get: csls-image-git
         trigger: true
       - get: concourse-base-image-git
-          trigger: true
-          passed:
-            - build_base_docker_image
+        trigger: true
+        passed:
+        - cloudwatch-health-docker-image
       - task: build
         privileged: true
         config: &build-image-config
@@ -423,15 +423,15 @@ jobs:
             health: unhealthy
 
 
-  - name: build_gsuite_splunk_docker_image
+  - name: build-gsuite-splunk-docker-image
     serial: false
     plan:
       - get: gsuite-splunk-image-git
         trigger: true
       - get: concourse-base-image-git
-          trigger: true
-          passed:
-            - build_base_docker_image
+        trigger: true
+        passed:
+        - csls-docker-image
       - task: build
         privileged: true
         config:
