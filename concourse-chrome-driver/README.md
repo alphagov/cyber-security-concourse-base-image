@@ -2,7 +2,6 @@
 
 # Building the docker container 
 
-
 ```
 # NOTE: Replace version with the bumped version number
 docker build --no-cache -t gdscyber/concourse-chrome-driver -t gdscyber/concourse-chrome-driver:1.0 .

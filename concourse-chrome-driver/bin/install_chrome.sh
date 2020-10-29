@@ -12,6 +12,7 @@ unzip headless-chromium.zip
 rm headless-chromium.zip
 ln -fs /opt/headless-chromium /opt/chrome
 
+## This method installs a normal chrome stable release which can be used in --headless mode
 #touch /etc/yum.repos.d/google-chrome.repo
 #echo -e "[google-chrome]\nname=google-chrome\nbaseurl=http://dl.google.com/linux/chrome/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\ngpgkey=https://dl-ssl.google.com/linux/linux_signing_key.pub" >> /etc/yum.repos.d/google-chrome.repo
 #touch /etc/yum.repos.d/centos.repo
