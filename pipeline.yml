@@ -8,7 +8,8 @@ resource_types:
     type: docker-image
     source:
       repository: gdscyber/http-api-resource
-
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
 
 resources:
   - name: health-notification
@@ -40,7 +41,7 @@ resources:
     source:
       branch: master
       paths:
-        - amazonlinux2/Dockerfile
+        - amazonlinux2/
       uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
 
   - name: load-testing-image-git
@@ -49,6 +50,14 @@ resources:
       branch: master
       paths:
         - load_testing/Dockerfile
+      uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
+
+  - name: concourse-chrome-driver-image-git
+    type: git
+    source:
+      branch: master
+      paths:
+        - concourse-chrome-driver/
       uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
 
   - name: github-security-dashboard-image-git
@@ -78,6 +87,15 @@ resources:
         - gds-gsuite-govuk-paas/bin/*
       uri: git@github.com:alphagov/cyber-security-splunk-apps.git
 
+  - name: salesforce-splunk-image-git
+    type: git
+    source:
+      branch: master
+      private_key: ((gsuite-splunk-private-key))
+      paths:
+        - gds-salesforce-forwarder-paas/
+      uri: git@github.com:alphagov/cyber-security-splunk-apps.git
+
   - name: csls-image-git
     type: git
     source:
@@ -99,36 +117,56 @@ resources:
     source:
       <<: *build-image-source
       tag: amazonlinux2
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
       repository: gdscyber/cyber-security-concourse-base-image
 
   - name: load-testing-image-docker-hub
     type: registry-image
     source:
       <<: *build-image-source
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
       repository: gdscyber/artillery-load-testing
 
   - name: github-security-dashboard-image-docker-hub
     type: registry-image
     source:
       <<: *build-image-source
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
       repository: gdscyber/sec_adv
 
   - name: cloudwatch-health-image-docker-hub
     type: registry-image
     source:
       <<: *build-image-source
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
       repository: gdscyber/concourse-worker-health
 
   - name: gsuite-splunk-image-docker-hub
     type: registry-image
     source:
       <<: *build-image-source
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
       repository: gdscyber/gsuite-splunk
+
+  - name: salesforce-splunk-image-docker-hub
+    type: registry-image
+    source:
+      <<: *build-image-source
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
+      repository: gdscyber/salesforce-splunk
 
   - name: csls-image-docker-hub
     type: registry-image
     source:
       <<: *build-image-source
+      username: ((dockerhub_username))
+      password: ((dockerhub_password))
       repository: gdscyber/csls-concourse
 
 jobs:
@@ -232,10 +270,6 @@ jobs:
     plan:
       - get: concourse-base-image-git-amazonlinux2
         trigger: true
-      - get: concourse-base-image-git
-        trigger: true
-        passed:
-        - build-load-testing-docker-image
       - task: build
         privileged: true
         config:
@@ -287,7 +321,7 @@ jobs:
       - get: concourse-base-image-git
         trigger: true
         passed:
-        - build-base-docker-image-amazonlinux2
+        - build-load-testing-docker-image
       - task: build
         privileged: true
         config:
@@ -324,7 +358,6 @@ jobs:
           params:
             message: "GitHub security dashboard image Docker Hub upload failed."
             health: unhealthy
-
 
   - name: cloudwatch-health-docker-image
     serial: false
@@ -422,16 +455,12 @@ jobs:
             message: "CSLS image Docker Hub upload failed."
             health: unhealthy
 
-
+  # base-image: splunk/splunk
   - name: build-gsuite-splunk-docker-image
     serial: false
     plan:
       - get: gsuite-splunk-image-git
         trigger: true
-      - get: concourse-base-image-git
-        trigger: true
-        passed:
-        - csls-docker-image
       - task: build
         privileged: true
         config:
@@ -467,4 +496,90 @@ jobs:
           <<: *health_status_notify
           params:
             message: "Gsuite splunk image Docker Hub upload failed."
+            health: unhealthy
+
+  # base-image: splunk/splunk
+  - name: build-salesforce-splunk-docker-image
+    serial: false
+    plan:
+      - get: salesforce-splunk-image-git
+        trigger: true
+      - task: build
+        privileged: true
+        config:
+          <<: *build-image-config
+          params:
+            CONTEXT: salesforce-splunk-image-git/gds-salesforce-forwarder-paas/
+          inputs:
+            - name: salesforce-splunk-image-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Salesforce splunk image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Salesforce splunk image build failed."
+            health: unhealthy
+
+      - put: salesforce-splunk-image-docker-hub
+        params:
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Salesforce splunk image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Salesforce splunk image Docker Hub upload failed."
+            health: unhealthy
+
+  # base-image: amazonlinux
+  - name: build-concourse-chrome-driver-docker-image
+    serial: false
+    plan:
+      - get: concourse-chrome-driver-image-git
+        trigger: true
+      - task: build
+        privileged: true
+        config:
+          <<: *build-image-config
+          params:
+            CONTEXT: concourse-chrome-driver-image-git/
+          inputs:
+            - name: concourse-chrome-driver-image-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Concourse chrome driver image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Concourse chrome driver image build failed."
+            health: unhealthy
+
+      - put: concourse-chrome-driver-image-docker-hub
+        params:
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Concourse chrome driver image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Concourse chrome driver image Docker Hub upload failed."
             health: unhealthy
