@@ -2,14 +2,17 @@
 health_status_notify: &health_status_notify
   put: health-notification
 
+blocks:
+  docker-creds: &docker-creds
+    username: ((dockerhub_username))
+    password: ((dockerhub_password))
 
 resource_types:
   - name: http-api
     type: docker-image
     source:
       repository: gdscyber/http-api-resource
-      username: ((dockerhub_username))
-      password: ((dockerhub_password))
+      <<: *docker-creds
 
 resources:
   - name: health-notification
@@ -107,66 +110,51 @@ resources:
 
   - name: concourse-base-image-docker-hub
     type: registry-image
-    source: &build-image-source
-      username: ((dockerhub_username))
-      password: ((dockerhub_password))
+    source:
+      <<: *docker-creds
       repository: gdscyber/cyber-security-concourse-base-image
 
   - name: concourse-base-image-docker-hub-amazonlinux2
     type: registry-image
     source:
-      <<: *build-image-source
+      <<: *docker-creds
       tag: amazonlinux2
-      username: ((dockerhub_username))
-      password: ((dockerhub_password))
       repository: gdscyber/cyber-security-concourse-base-image
 
   - name: load-testing-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
-      username: ((dockerhub_username))
-      password: ((dockerhub_password))
+      <<: *docker-creds
       repository: gdscyber/artillery-load-testing
 
   - name: github-security-dashboard-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
-      username: ((dockerhub_username))
-      password: ((dockerhub_password))
+      <<: *docker-creds
       repository: gdscyber/sec_adv
 
   - name: cloudwatch-health-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
-      username: ((dockerhub_username))
-      password: ((dockerhub_password))
+      <<: *docker-creds
       repository: gdscyber/concourse-worker-health
 
   - name: gsuite-splunk-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
-      username: ((dockerhub_username))
-      password: ((dockerhub_password))
+      <<: *docker-creds
       repository: gdscyber/gsuite-splunk
 
   - name: salesforce-splunk-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
-      username: ((dockerhub_username))
-      password: ((dockerhub_password))
+      <<: *docker-creds
       repository: gdscyber/salesforce-splunk
 
   - name: csls-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
-      username: ((dockerhub_username))
-      password: ((dockerhub_password))
+      <<: *docker-creds
       repository: gdscyber/csls-concourse
 
 jobs:
