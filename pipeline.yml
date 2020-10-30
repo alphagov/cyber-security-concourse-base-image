@@ -157,6 +157,12 @@ resources:
       <<: *docker-creds
       repository: gdscyber/csls-concourse
 
+  - name: concourse-chrome-driver-image-docker-hub
+    type: registry-image
+    source:
+      <<: *docker-creds
+      repository: gdscyber/concourse-chrome-driver
+
 jobs:
   - name: build-base-docker-image
     serial: false
