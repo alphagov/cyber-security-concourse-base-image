@@ -31,6 +31,14 @@ resources:
         build_number: "{BUILD_NAME}"
       service: "Docker Build Pipeline"
 
+  - name: concourse-base-image-pipeline-git
+    type: git
+    source:
+      branch: master
+      paths:
+        - pipeline.yml
+      uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
+
   - name: concourse-base-image-git
     type: git
     source:
@@ -53,14 +61,6 @@ resources:
       branch: master
       paths:
         - load_testing/Dockerfile
-      uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
-
-  - name: concourse-chrome-driver-image-git
-    type: git
-    source:
-      branch: master
-      paths:
-        - concourse-chrome-driver/
       uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
 
   - name: github-security-dashboard-image-git
@@ -157,13 +157,20 @@ resources:
       <<: *docker-creds
       repository: gdscyber/csls-concourse
 
-  - name: concourse-chrome-driver-image-docker-hub
-    type: registry-image
-    source:
-      <<: *docker-creds
-      repository: gdscyber/concourse-chrome-driver
-
 jobs:
+  - name: update-pipeline
+    serial: false
+    plan:
+      - get: concourse-base-image-pipeline-git
+        trigger: true
+      - set_pipeline: cyber-security-concourse-base-image
+        file: concourse-base-image-pipeline-git/pipeline.yml
+    on_failure:
+      <<: *health_status_notify
+      params:
+        message: Pipeline update failed
+        health: unhealthy
+
   - name: build-base-docker-image
     serial: false
     plan:
@@ -533,47 +540,4 @@ jobs:
           <<: *health_status_notify
           params:
             message: "Salesforce splunk image Docker Hub upload failed."
-            health: unhealthy
-
-  # base-image: amazonlinux
-  - name: build-concourse-chrome-driver-docker-image
-    serial: false
-    plan:
-      - get: concourse-chrome-driver-image-git
-        trigger: true
-      - task: build
-        privileged: true
-        config:
-          <<: *build-image-config
-          params:
-            CONTEXT: concourse-chrome-driver-image-git/
-          inputs:
-            - name: concourse-chrome-driver-image-git
-          outputs:
-            - name: image
-          run:
-            path: build
-        on_success:
-          <<: *health_status_notify
-          params:
-            message: "Concourse chrome driver image build completed successfully."
-            health: healthy
-        on_failure:
-          <<: *health_status_notify
-          params:
-            message: "Concourse chrome driver image build failed."
-            health: unhealthy
-
-      - put: concourse-chrome-driver-image-docker-hub
-        params:
-          image: image/image.tar
-        on_success:
-          <<: *health_status_notify
-          params:
-            message: "Concourse chrome driver image Docker Hub upload completed successfully."
-            health: healthy
-        on_failure:
-          <<: *health_status_notify
-          params:
-            message: "Concourse chrome driver image Docker Hub upload failed."
             health: unhealthy
