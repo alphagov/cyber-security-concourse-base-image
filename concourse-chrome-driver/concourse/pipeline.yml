@@ -1,0 +1,109 @@
+---
+health_status_notify: &health_status_notify
+  put: health-notification
+
+blocks:
+  docker-creds: &docker-creds
+    username: ((dockerhub_username))
+    password: ((dockerhub_password))
+
+resource_types:
+  - name: http-api
+    type: docker-image
+    source:
+      repository: gdscyber/http-api-resource
+      <<: *docker-creds
+
+resources:
+  - name: health-notification
+    type: http-api
+    source:
+      uri: https://((health_host_prod))/?alert_type=concourse$&alert_name=health
+      method: POST
+      headers:
+        Authorization: "Bearer ((health_token_prod))"
+      json:
+        service: "{service}"
+        state: "{health}"
+        message: "{message}"
+        pipeline: "{BUILD_PIPELINE_NAME}"
+        job: "{BUILD_JOB_NAME}"
+        build_number: "{BUILD_NAME}"
+      service: "Docker Build Pipeline"
+
+  - name: concourse-chrome-driver-image-git
+    type: git
+    source:
+      branch: master
+      paths:
+        - concourse-chrome-driver/
+      uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
+
+  - name: concourse-chrome-driver-image-docker-hub
+    type: registry-image
+    source:
+      <<: *docker-creds
+      repository: gdscyber/concourse-chrome-driver
+
+jobs:
+  - name: update-pipeline
+    serial: true
+    plan:
+      - get: concourse-chrome-driver-image-git
+        trigger: true
+      - set_pipeline: concourse-chrome-driver
+        file: concourse-chrome-driver-image-git/concourse-chrome-driver/concourse/pipeline.yml
+    on_failure:
+      <<: *health_status_notify
+      params:
+        message: Pipeline update failed
+        health: unhealthy
+
+  # base-image: amazonlinux
+  - name: build-concourse-chrome-driver-docker-image
+    serial: true
+    plan:
+      - get: concourse-chrome-driver-image-git
+        trigger: true
+        passed: 
+        - update-pipeline
+      - task: build
+        privileged: true
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: vito/oci-build-task
+          params:
+            CONTEXT: concourse-chrome-driver-image-git/
+          inputs:
+            - name: concourse-chrome-driver-image-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Concourse chrome driver image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Concourse chrome driver image build failed."
+            health: unhealthy
+
+      - put: concourse-chrome-driver-image-docker-hub
+        params:
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Concourse chrome driver image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Concourse chrome driver image Docker Hub upload failed."
+            health: unhealthy

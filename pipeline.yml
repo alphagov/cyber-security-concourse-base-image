@@ -2,13 +2,17 @@
 health_status_notify: &health_status_notify
   put: health-notification
 
+blocks:
+  docker-creds: &docker-creds
+    username: ((dockerhub_username))
+    password: ((dockerhub_password))
 
 resource_types:
   - name: http-api
     type: docker-image
     source:
       repository: gdscyber/http-api-resource
-
+      <<: *docker-creds
 
 resources:
   - name: health-notification
@@ -27,12 +31,28 @@ resources:
         build_number: "{BUILD_NAME}"
       service: "Docker Build Pipeline"
 
+  - name: concourse-base-image-pipeline-git
+    type: git
+    source:
+      branch: master
+      paths:
+        - pipeline.yml
+      uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
+
   - name: concourse-base-image-git
     type: git
     source:
       branch: master
       paths:
         - Dockerfile
+      uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
+
+  - name: concourse-base-image-git-amazonlinux2
+    type: git
+    source:
+      branch: master
+      paths:
+        - amazonlinux2/
       uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
 
   - name: load-testing-image-git
@@ -68,6 +88,15 @@ resources:
         - gds-gsuite-govuk-paas/Dockerfile
         - gds-gsuite-govuk-paas/input-add-on-for-g-suite-app*
         - gds-gsuite-govuk-paas/bin/*
+      uri: git@github.com:alphagov/cyber-security-splunk-apps.git
+
+  - name: salesforce-splunk-image-git
+    type: git
+    source:
+      branch: master
+      private_key: ((gsuite-splunk-private-key))
+      paths:
+        - gds-salesforce-forwarder-paas/
       uri: git@github.com:alphagov/cyber-security-splunk-apps.git
 
   - name: csls-image-git
@@ -117,67 +146,92 @@ resources:
 
   - name: concourse-base-image-docker-hub
     type: registry-image
-    source: &build-image-source
-      username: ((dockerhub_username))
-      password: ((dockerhub_password))
+    source:
+      <<: *docker-creds
+      repository: gdscyber/cyber-security-concourse-base-image
+
+  - name: concourse-base-image-docker-hub-amazonlinux2
+    type: registry-image
+    source:
+      <<: *docker-creds
+      tag: amazonlinux2
       repository: gdscyber/cyber-security-concourse-base-image
 
   - name: load-testing-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
+      <<: *docker-creds
       repository: gdscyber/artillery-load-testing
 
   - name: github-security-dashboard-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
+      <<: *docker-creds
       repository: gdscyber/sec_adv
 
   - name: cloudwatch-health-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
+      <<: *docker-creds
       repository: gdscyber/concourse-worker-health
 
   - name: gsuite-splunk-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
+      <<: *docker-creds
       repository: gdscyber/gsuite-splunk
+
+  - name: salesforce-splunk-image-docker-hub
+    type: registry-image
+    source:
+      <<: *docker-creds
+      repository: gdscyber/salesforce-splunk
 
   - name: csls-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
+      <<: *docker-creds
       repository: gdscyber/csls-concourse
 
   - name: cyber-chalice-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
+      <<: *docker-creds
       repository: gdscyber/cyber-chalice
 
   - name: csw-concourse-worker-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
+      <<: *docker-creds
       repository: gdscyber/csw-concourse-worker
 
   - name: concourse-worker-health-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
+      <<: *docker-creds
       repository: gdscyber/concourse-worker-health
 
   - name: http-api-resource-image-docker-hub
     type: registry-image
     source:
-      <<: *build-image-source
+      <<: *docker-creds
       repository: gdscyber/http-api-resource
 
 jobs:
-  - name: build_base_docker_image
+  - name: update-pipeline
+    serial: false
+    plan:
+      - get: concourse-base-image-pipeline-git
+        trigger: true
+      - set_pipeline: cyber-security-concourse-base-image
+        file: concourse-base-image-pipeline-git/pipeline.yml
+    on_failure:
+      <<: *health_status_notify
+      params:
+        message: Pipeline update failed
+        health: unhealthy
+
+  - name: build-base-docker-image
     serial: false
     plan:
       - get: concourse-base-image-git
@@ -226,11 +280,15 @@ jobs:
             health: unhealthy
 
 
-  - name: build_load_testing_docker_image
+  - name: build-load-testing-docker-image
     serial: false
     plan:
       - get: load-testing-image-git
         trigger: true
+      - get: concourse-base-image-git
+        trigger: true
+        passed:
+        - build-base-docker-image
       - task: build
         privileged: true
         config:
@@ -268,13 +326,63 @@ jobs:
             message: "Load testing image Docker Hub upload failed."
             health: unhealthy
 
+  - name: build-base-docker-image-amazonlinux2
+    serial: false
+    plan:
+      - get: concourse-base-image-git-amazonlinux2
+        trigger: true
+      - task: build
+        privileged: true
+        config:
+          platform: linux
+          image_resource:
+            type: registry-image
+            source:
+              repository: vito/oci-build-task
+          params:
+            CONTEXT: concourse-base-image-git-amazonlinux2/amazonlinux2
+          inputs:
+            - name: concourse-base-image-git-amazonlinux2
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Cyber security concourse base image (Amazon Linux 2) build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Cyber security concourse base image (Amazon Linux 2) build failed."
+            health: unhealthy
 
-  - name: build_github_security_dashboard_docker_image
+
+      - put: concourse-base-image-docker-hub-amazonlinux2
+        params:
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Cyber security concourse base image (Amazon Linux 2) Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Cyber security concourse base image (Amazon Linux 2) Docker Hub upload failed."
+            health: unhealthy
+
+
+  - name: build-github-security-dashboard-docker-image
     serial: false
     plan:
       - get: github-security-dashboard-image-git
         trigger: true
-
+      - get: concourse-base-image-git
+        trigger: true
+        passed:
+        - build-load-testing-docker-image
       - task: build
         privileged: true
         config:
@@ -312,13 +420,15 @@ jobs:
             message: "GitHub security dashboard image Docker Hub upload failed."
             health: unhealthy
 
-
-  - name: cloudwatch_health_docker_image
+  - name: cloudwatch-health-docker-image
     serial: false
     plan:
       - get: cloudwatch-health-image-git
         trigger: true
-
+      - get: concourse-base-image-git
+        trigger: true
+        passed:
+        - build-github-security-dashboard-docker-image
       - task: build
         privileged: true
         config:
@@ -356,12 +466,15 @@ jobs:
             message: "Cloudwatch health image Docker Hub upload failed."
             health: unhealthy
 
-  - name: csls_docker_image
+  - name: csls-docker-image
     serial: false
     plan:
       - get: csls-image-git
         trigger: true
-
+      - get: concourse-base-image-git
+        trigger: true
+        passed:
+        - cloudwatch-health-docker-image
       - task: build
         privileged: true
         config: &build-image-config
@@ -403,8 +516,8 @@ jobs:
             message: "CSLS image Docker Hub upload failed."
             health: unhealthy
 
-
-  - name: build_gsuite_splunk_docker_image
+  # base-image: splunk/splunk
+  - name: build-gsuite-splunk-docker-image
     serial: false
     plan:
       - get: gsuite-splunk-image-git
@@ -444,6 +557,49 @@ jobs:
           <<: *health_status_notify
           params:
             message: "Gsuite splunk image Docker Hub upload failed."
+            health: unhealthy
+
+  # base-image: splunk/splunk
+  - name: build-salesforce-splunk-docker-image
+    serial: false
+    plan:
+      - get: salesforce-splunk-image-git
+        trigger: true
+      - task: build
+        privileged: true
+        config:
+          <<: *build-image-config
+          params:
+            CONTEXT: salesforce-splunk-image-git/gds-salesforce-forwarder-paas/
+          inputs:
+            - name: salesforce-splunk-image-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Salesforce splunk image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Salesforce splunk image build failed."
+            health: unhealthy
+
+      - put: salesforce-splunk-image-docker-hub
+        params:
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "Salesforce splunk image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "Salesforce splunk image Docker Hub upload failed."
             health: unhealthy
 
   - name: build_cyber_chalice_docker_image
