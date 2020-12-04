@@ -602,7 +602,7 @@ jobs:
             message: "Salesforce splunk image Docker Hub upload failed."
             health: unhealthy
 
-  - name: build_cyber_chalice_docker_image
+  - name: build-cyber-chalice-docker-image
     serial: false
     plan:
       - get: cyber-chalice-git
@@ -644,7 +644,7 @@ jobs:
             message: "cyber-chalice image Docker Hub upload failed."
             health: unhealthy
 
-  - name: build_csw_concourse_worker_docker_image
+  - name: build-csw-concourse-worker-docker-image
     serial: false
     plan:
       - get: csw-image-git
@@ -686,7 +686,7 @@ jobs:
             message: "csw-concourse-worker image Docker Hub upload failed."
             health: unhealthy
 
-  - name: build_concourse_worker_health_docker_image
+  - name: build-concourse-worker-health-docker-image
     serial: false
     plan:
       - get: concourse-worker-health-git
@@ -728,7 +728,7 @@ jobs:
             message: "concourse-worker-health image Docker Hub upload failed."
             health: unhealthy
 
-  - name: build_http_api_resource_docker_image
+  - name: build-http-api-resource-docker-image
     serial: false
     plan:
       - get: http-api-resource-git
