@@ -76,7 +76,7 @@ jobs:
             source:
               repository: vito/oci-build-task
           params:
-            CONTEXT: concourse-chrome-driver-image-git/
+            CONTEXT: concourse-chrome-driver-image-git/concourse-chrome-driver/
           inputs:
             - name: concourse-chrome-driver-image-git
           outputs:
