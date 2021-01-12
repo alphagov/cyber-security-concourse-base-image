@@ -4,8 +4,8 @@ health_status_notify: &health_status_notify
 
 blocks:
   docker-creds: &docker-creds
-    username: ((dockerhub_username))
-    password: ((dockerhub_password))
+    username: ((docker_hub_username))
+    password: ((docker_hub_password))
 
 resource_types:
   - name: http-api
