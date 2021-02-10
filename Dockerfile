@@ -25,6 +25,9 @@ RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1 
 RUN ln -s /usr/bin/python3 /usr/bin/python && \
     ln -s /usr/bin/pip3 /usr/bin/pip
 
+# Upgrade pip
+RUN pip install --upgrade pip
+
 # install terraform
 WORKDIR /tmp
 
