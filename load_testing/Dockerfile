@@ -7,6 +7,10 @@ RUN apt-get update -y && \
 RUN npm install -g \
         artillery \
         artillery-engine-kinesis
+        
+RUN mkdir -p /node_modules/artillery/bin && \
+    ln -s /usr/local/bin/artillery \
+        /node_modules/artillery/bin/artillery
 
 VOLUME /artillery
 WORKDIR /artillery
