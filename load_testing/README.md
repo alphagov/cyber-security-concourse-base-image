@@ -7,7 +7,7 @@ Artillery is a load testing tool that we can run in concourse to test the resili
 This pipeline builds a docker image and uploads it to dockerhub at `gdscyber/artillery-load-testing`. You can pull the image in your pipeline to run load tests. You will need to run the artillery commands within your docker image as shown in the example below:
 
 ```shell
-/node_modules/artillery/bin/artillery run artillery-config.yml -o artillery.json
+artillery run artillery-config.yml -o artillery.json
 ```
 
 ## Artillery config
