@@ -64,10 +64,12 @@ RUN ln -s /usr/bin/python3 /usr/bin/python && \
 
 # install terraform
 WORKDIR /tmp
-
-RUN curl https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip -o terraform_${TF_VERSION}_linux_amd64.zip && \
-    curl https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_{$TF_VERSION}_SHA256SUMS -o terraform.sha && \
-        echo if [ $(sha256sum -c terraform.sha 2>/dev/null | grep OK | wc -l) -eq 1 ]; then echo 'Terraform file integrity is good'; unzip terraform_${TF_VERSION}_linux_amd64.zip && mv terraform /usr/bin/terraform && rm terraform_${TF_VERSION}_linux_amd64.zip terraform.sha;fi
+RUN wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip && \
+    wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS && \
+        sha256sum --ignore-missing -c terraform_${TF_VERSION}_SHA256SUMS && \
+        unzip terraform_${TF_VERSION}_linux_amd64.zip && \
+        mv terraform /usr/bin/terraform && \
+        rm terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS
 
 # Copy over AWS STS AssumeRole scripts
 COPY bin /usr/local/bin
