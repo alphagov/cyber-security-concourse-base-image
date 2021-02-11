@@ -12,7 +12,44 @@ LABEL user="gdscyber"
 LABEL Name="cyber_concourse_pipeline"
 LABEL Version=0.0.1
 
-RUN apt-get update -y && apt-get install -y python3.7 python3.7-dev python3-distutils python3-pip build-essential libssl-dev libffi-dev python3-dev python3.7-venv awscli jq curl unzip git musl musl-dev musl-tools zip ca-certificates gcc libc6-dev wget && apt-get clean
+RUN apt-get update -y && \
+        apt-get install -y \
+        awscli \
+        build-essential \
+        ca-certificates \
+        curl \
+        gcc \
+        git \
+        jq \
+        libbz2-dev \
+        libc6-dev \
+        libffi-dev \
+        liblzma-dev \
+        libncurses5-dev \
+        libreadline-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        libxml2-dev \
+        libxmlsec1-dev \
+        llvm \
+        make \
+        musl \
+        musl-dev \
+        musl-tools \
+        python3-dev \
+        python3-distutils \
+        python3-pip \
+        python3.7 \
+        python3.7-dev \
+        python3.7-venv \
+        tk-dev \
+        unzip \
+        wget \
+        xz-utils \
+        zip \
+        zlib1g-dev \
+        && \
+        apt-get clean
 
 # Python 3 encoding set
 ENV LANG C.UTF-8
