@@ -85,6 +85,10 @@ ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
 
 # Install Pythons
 RUN pyenv install 3.6.12
+RUN pyenv install 3.7.5
 RUN pyenv install 3.7.9
 RUN pyenv install 3.8.7
 RUN pyenv install 3.9.1
+
+# Set default python version
+RUN pyenv global 3.7.5
