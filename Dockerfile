@@ -74,3 +74,17 @@ RUN wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_V
 # Copy over AWS STS AssumeRole scripts
 COPY bin /usr/local/bin
 RUN chmod +x /usr/local/bin/*.sh
+
+# Install pyenv
+RUN git clone https://github.com/pyenv/pyenv.git /root/.pyenv
+
+# Required env vars for pyenv
+ENV HOME /root
+ENV PYENV_ROOT $HOME/.pyenv
+ENV PATH $PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH
+
+# Install Pythons
+RUN pyenv install 3.6.12
+RUN pyenv install 3.7.9
+RUN pyenv install 3.8.7
+RUN pyenv install 3.9.1
