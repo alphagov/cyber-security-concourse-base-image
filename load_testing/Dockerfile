@@ -4,8 +4,9 @@ RUN apt-get update -y && \
         apt-get install -y nodejs npm && \
         apt-get clean
 
-RUN npm install --ignore-scripts artillery && \
-        npm install --ignore-scripts artillery-engine-kinesis
+RUN npm install -g \
+        artillery \
+        artillery-engine-kinesis
 
 VOLUME /artillery
 WORKDIR /artillery
