@@ -102,9 +102,12 @@ resources:
   - name: csls-image-git
     type: git
     source:
-      branch: master
+      branch: add_splunkclient
       paths:
         - config/concourse/Dockerfile
+        - kinesis_processor/cargo.lock
+        - kinesis_processor/cargo.toml
+        - kinesis_processor/.cargo/config.toml
       private_key: ((pipeline-git-priv-key))
       uri: git@github.com:alphagov/centralised-security-logging-service.git
 
@@ -424,7 +427,7 @@ jobs:
             source:
               repository: vito/oci-build-task
           params:
-            CONTEXT: csls-image-git/config/concourse
+            DOCKERFILE: csls-image-git/config/concourse/Dockerfile
           inputs:
             - name: csls-image-git
           outputs:
