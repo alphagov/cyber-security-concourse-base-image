@@ -105,8 +105,8 @@ resources:
       branch: add_splunkclient
       paths:
         - config/concourse/Dockerfile
-        - kinesis_processor/cargo.lock
-        - kinesis_processor/cargo.toml
+        - kinesis_processor/Cargo.lock
+        - kinesis_processor/Cargo.toml
         - kinesis_processor/.cargo/config.toml
       private_key: ((pipeline-git-priv-key))
       uri: git@github.com:alphagov/centralised-security-logging-service.git
