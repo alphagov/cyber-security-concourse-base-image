@@ -102,7 +102,7 @@ resources:
   - name: csls-image-git
     type: git
     source:
-      branch: add_splunkclient
+      branch: master
       paths:
         - config/concourse/Dockerfile
         - kinesis_processor/cargo.lock
@@ -228,10 +228,12 @@ jobs:
     plan:
       - get: load-testing-image-git
         trigger: true
+
       - get: concourse-base-image-git
         trigger: true
         passed:
-        - build-base-docker-image
+          - build-base-docker-image
+
       - task: build
         privileged: true
         config:
@@ -322,10 +324,12 @@ jobs:
     plan:
       - get: github-security-dashboard-image-git
         trigger: true
+
       - get: concourse-base-image-git
         trigger: true
         passed:
-        - build-load-testing-docker-image
+          - build-base-docker-image
+
       - task: build
         privileged: true
         config:
@@ -366,12 +370,15 @@ jobs:
   - name: cloudwatch-health-docker-image
     serial: false
     plan:
+
       - get: cloudwatch-health-image-git
         trigger: true
+
       - get: concourse-base-image-git
         trigger: true
         passed:
-        - build-github-security-dashboard-docker-image
+          - build-base-docker-image
+
       - task: build
         privileged: true
         config:
@@ -412,12 +419,15 @@ jobs:
   - name: csls-docker-image
     serial: false
     plan:
+
       - get: csls-image-git
         trigger: true
+
       - get: concourse-base-image-git
         trigger: true
         passed:
-        - cloudwatch-health-docker-image
+          - build-base-docker-image
+
       - task: build
         privileged: true
         config: &build-image-config
