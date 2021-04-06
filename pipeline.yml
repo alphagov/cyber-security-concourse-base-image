@@ -640,6 +640,12 @@ jobs:
     plan:
       - get: csw-image-git
         trigger: true
+
+      - get: concourse-base-image-git
+        trigger: true
+        passed:
+          - build-cyber-chalice-docker-image
+
       - task: build
         privileged: true
         config:
