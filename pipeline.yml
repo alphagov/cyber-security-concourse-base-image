@@ -592,6 +592,12 @@ jobs:
     plan:
       - get: cyber-chalice-git
         trigger: true
+
+      - get: concourse-base-image-git
+        trigger: true
+        passed:
+          - build-base-docker-image
+
       - task: build
         privileged: true
         config:
