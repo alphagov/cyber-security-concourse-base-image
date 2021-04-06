@@ -126,15 +126,6 @@ resources:
       private_key: ((pipeline-git-priv-key))
       uri: git@github.com:alphagov/csw-concourse.git
 
-  - name: concourse-worker-health-git
-    type: git
-    source:
-      branch: master
-      paths:
-        - docker/concourse-worker-health/Dockerfile
-      private_key: ((pipeline-git-priv-key))
-      uri: git@github.com:alphagov/cyber-security-cloudwatch-config.git
-
   - name: http-api-resource-git
     type: git
     source:
@@ -204,12 +195,6 @@ resources:
     source:
       <<: *docker-creds
       repository: gdscyber/csw-concourse-worker
-
-  - name: concourse-worker-health-image-docker-hub
-    type: registry-image
-    source:
-      <<: *docker-creds
-      repository: gdscyber/concourse-worker-health
 
   - name: http-api-resource-image-docker-hub
     type: registry-image
@@ -684,48 +669,6 @@ jobs:
           <<: *health_status_notify
           params:
             message: "csw-concourse-worker image Docker Hub upload failed."
-            health: unhealthy
-
-  - name: build-concourse-worker-health-docker-image
-    serial: false
-    plan:
-      - get: concourse-worker-health-git
-        trigger: true
-      - task: build
-        privileged: true
-        config:
-          <<: *build-image-config
-          params:
-            CONTEXT: concourse-worker-health-git/docker/concourse-worker-health
-          inputs:
-            - name: concourse-worker-health-git
-          outputs:
-            - name: image
-          run:
-            path: build
-        on_success:
-          <<: *health_status_notify
-          params:
-            message: "concourse-worker-health image build completed successfully."
-            health: healthy
-        on_failure:
-          <<: *health_status_notify
-          params:
-            message: "concourse-worker-health image build failed."
-            health: unhealthy
-
-      - put: concourse-worker-health-image-docker-hub
-        params:
-          image: image/image.tar
-        on_success:
-          <<: *health_status_notify
-          params:
-            message: "concourse-worker-health image Docker Hub upload completed successfully."
-            health: healthy
-        on_failure:
-          <<: *health_status_notify
-          params:
-            message: "concourse-worker-health image Docker Hub upload failed."
             health: unhealthy
 
   - name: build-http-api-resource-docker-image
