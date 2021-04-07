@@ -569,3 +569,44 @@ jobs:
           params:
             message: "Salesforce splunk image Docker Hub upload failed."
             health: unhealthy
+  - name: build-http-api-resource-docker-image
+    serial: false
+    plan:
+      - get: http-api-resource-git
+        trigger: true
+      - task: build
+        privileged: true
+        config:
+          <<: *build-image-config
+          params:
+            CONTEXT: http-api-resource-git/docker/http-api-resource
+          inputs:
+            - name: http-api-resource-git
+          outputs:
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "http-api-resource image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "http-api-resource image build failed."
+            health: unhealthy
+
+      - put: http-api-resource-image-docker-hub
+        params:
+          image: image/image.tar
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "http-api-resource image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "http-api-resource image Docker Hub upload failed."
+            health: unhealthy
