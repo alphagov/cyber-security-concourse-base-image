@@ -730,7 +730,7 @@ jobs:
       - put: csw-concourse-worker-image-docker-hub
         params:
           image: image/image.tar
-          additional_tags: cyber-image-git/dockerfiles/chalice/tags
+          additional_tags: csw-image-git/dockerfiles/csw/tags
         on_success:
           <<: *health_status_notify
           params:
