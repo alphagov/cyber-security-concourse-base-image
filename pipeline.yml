@@ -125,7 +125,7 @@ resources:
     source:
       branch: master
       paths:
-        - dockerfiles/chalice/Dockerfile
+        - dockerfiles/chalice
       private_key: ((pipeline-git-priv-key))
       uri: git@github.com:alphagov/csw-concourse.git
 
@@ -134,7 +134,7 @@ resources:
     source:
       branch: master
       paths:
-        - dockerfiles/csw/Dockerfile
+        - dockerfiles/csw
       private_key: ((pipeline-git-priv-key))
       uri: git@github.com:alphagov/csw-concourse.git
 
