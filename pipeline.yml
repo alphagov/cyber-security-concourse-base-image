@@ -120,6 +120,24 @@ resources:
       private_key: ((pipeline-git-priv-key))
       uri: git@github.com:alphagov/cyber-security-cloudwatch-config.git
 
+  - name: cyber-chalice-git
+    type: git
+    source:
+      branch: master
+      paths:
+        - dockerfiles/chalice
+      private_key: ((pipeline-git-priv-key))
+      uri: git@github.com:alphagov/csw-concourse.git
+
+  - name: csw-image-git
+    type: git
+    source:
+      branch: master
+      paths:
+        - dockerfiles/csw
+      private_key: ((pipeline-git-priv-key))
+      uri: git@github.com:alphagov/csw-concourse.git
+
   - name: concourse-base-image-docker-hub
     type: registry-image
     source:
@@ -174,6 +192,18 @@ resources:
     source:
       <<: *docker-creds
       repository: gdscyber/http-api-resource
+
+  - name: cyber-chalice-image-docker-hub
+    type: registry-image
+    source:
+      <<: *docker-creds
+      repository: gdscyber/cyber-chalice
+
+  - name: csw-concourse-worker-image-docker-hub
+    type: registry-image
+    source:
+      <<: *docker-creds
+      repository: gdscyber/csw-concourse-worker
 
 jobs:
   - name: update-pipeline
@@ -569,6 +599,7 @@ jobs:
           params:
             message: "Salesforce splunk image Docker Hub upload failed."
             health: unhealthy
+
   - name: build-http-api-resource-docker-image
     serial: false
     plan:
@@ -609,4 +640,104 @@ jobs:
           <<: *health_status_notify
           params:
             message: "http-api-resource image Docker Hub upload failed."
+            health: unhealthy
+
+  - name: build-cyber-chalice-docker-image
+    serial: false
+    plan:
+      - get: cyber-chalice-git
+        trigger: true
+
+      - get: concourse-base-image-git
+        trigger: true
+        passed:
+          - build-base-docker-image
+
+      - task: build
+        privileged: true
+        config:
+          <<: *build-image-config
+          params:
+            CONTEXT: cyber-chalice-git/dockerfiles/chalice/
+          inputs:
+            - name: cyber-chalice-git
+          outputs:
+            - name: cyber-chalice-git # For the tags file
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "cyber-chalice image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "cyber-chalice image build failed."
+            health: unhealthy
+
+      - put: cyber-chalice-image-docker-hub
+        params:
+          image: image/image.tar
+          additional_tags: cyber-chalice-git/dockerfiles/chalice/tags
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "cyber-chalice image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "cyber-chalice image Docker Hub upload failed."
+            health: unhealthy
+
+  - name: build-csw-concourse-worker-docker-image
+    serial: false
+    plan:
+      - get: csw-image-git
+        trigger: true
+
+      - get: concourse-base-image-git
+        trigger: true
+        passed:
+          - build-cyber-chalice-docker-image
+
+      - task: build
+        privileged: true
+        config:
+          <<: *build-image-config
+          params:
+            CONTEXT: csw-image-git/dockerfiles/csw/
+          inputs:
+            - name: csw-image-git
+          outputs:
+            - name: cyber-chalice-git # For the tags file
+            - name: image
+          run:
+            path: build
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "csw-concourse-worker image build completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "csw-concourse-worker image build failed."
+            health: unhealthy
+
+      - put: csw-concourse-worker-image-docker-hub
+        params:
+          image: image/image.tar
+          additional_tags: csw-image-git/dockerfiles/csw/tags
+        on_success:
+          <<: *health_status_notify
+          params:
+            message: "csw-concourse-worker image Docker Hub upload completed successfully."
+            health: healthy
+        on_failure:
+          <<: *health_status_notify
+          params:
+            message: "csw-concourse-worker image Docker Hub upload failed."
             health: unhealthy
