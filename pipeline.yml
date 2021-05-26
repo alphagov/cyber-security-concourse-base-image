@@ -143,6 +143,7 @@ resources:
     source:
       <<: *docker-creds
       repository: gdscyber/cyber-security-concourse-base-image
+      tag: latest
 
   - name: concourse-base-image-docker-hub-amazonlinux2
     type: registry-image
@@ -156,54 +157,63 @@ resources:
     source:
       <<: *docker-creds
       repository: gdscyber/artillery-load-testing
+      tag: latest
 
   - name: github-security-dashboard-image-docker-hub
     type: registry-image
     source:
       <<: *docker-creds
       repository: gdscyber/sec_adv
+      tag: latest
 
   - name: cloudwatch-health-image-docker-hub
     type: registry-image
     source:
       <<: *docker-creds
       repository: gdscyber/concourse-worker-health
+      tag: latest
 
   - name: gsuite-splunk-image-docker-hub
     type: registry-image
     source:
       <<: *docker-creds
       repository: gdscyber/gsuite-splunk
+      tag: latest
 
   - name: salesforce-splunk-image-docker-hub
     type: registry-image
     source:
       <<: *docker-creds
       repository: gdscyber/salesforce-splunk
+      tag: latest
 
   - name: csls-image-docker-hub
     type: registry-image
     source:
       <<: *docker-creds
       repository: gdscyber/csls-concourse
+      tag: latest
 
   - name: http-api-resource-image-docker-hub
     type: registry-image
     source:
       <<: *docker-creds
       repository: gdscyber/http-api-resource
+      tag: latest
 
   - name: cyber-chalice-image-docker-hub
     type: registry-image
     source:
       <<: *docker-creds
       repository: gdscyber/cyber-chalice
+      tag: latest
 
   - name: csw-concourse-worker-image-docker-hub
     type: registry-image
     source:
       <<: *docker-creds
       repository: gdscyber/csw-concourse-worker
+      tag: latest
 
 jobs:
   - name: update-pipeline
