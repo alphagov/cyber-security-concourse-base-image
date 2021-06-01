@@ -89,3 +89,13 @@ RUN pyenv install 3.9.1
 
 # Set default python version
 RUN pyenv global 3.7.5
+
+# Version attrition csls
+ENV TF_VERSION 0.14.7
+WORKDIR /tmp
+RUN wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip && \
+        wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS && \
+        sha256sum --ignore-missing -c terraform_${TF_VERSION}_SHA256SUMS && \
+        unzip terraform_${TF_VERSION}_linux_amd64.zip && \
+        mv terraform /usr/bin/terraform-${TF_VERSION} && \
+        rm terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS
