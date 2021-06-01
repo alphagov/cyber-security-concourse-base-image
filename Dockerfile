@@ -60,25 +60,13 @@ RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 1 
 RUN ln -s /usr/bin/python3 /usr/bin/python && \
     ln -s /usr/bin/pip3 /usr/bin/pip
 
-# install terraform
-ENV TF_VERSION 0.12.26
-WORKDIR /tmp
-RUN wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip && \
-    wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS && \
-        sha256sum --ignore-missing -c terraform_${TF_VERSION}_SHA256SUMS && \
-        unzip terraform_${TF_VERSION}_linux_amd64.zip && \
-        mv terraform /usr/bin/terraform && \
-        rm terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS
-
-# Version attrition csls
-ENV TF_VERSION 0.14.7
-WORKDIR /tmp
-RUN wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip && \
-        wget https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_SHA256SUMS && \
-        sha256sum --ignore-missing -c terraform_${TF_VERSION}_SHA256SUMS && \
-        unzip terraform_${TF_VERSION}_linux_amd64.zip && \
-        mv terraform /usr/bin/terraform-${TF_VERSION} && \
-        rm terraform_${TF_VERSION}_linux_amd64.zip terraform_${TF_VERSION}_SHA256SUMS
+# Install tfenv
+RUN git clone https://github.com/tfutils/tfenv.git ~/.tfenv
+RUN ln -s ~/.tfenv/bin/* /usr/local/bin
+RUN tfenv install 0.12.26
+RUN tfenv install 0.12.31
+RUN tfenv install 0.14.7
+RUN tfenv use 0.12.26
 
 # Copy over AWS STS AssumeRole scripts
 COPY bin /usr/local/bin
