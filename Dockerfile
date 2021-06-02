@@ -66,7 +66,7 @@ RUN ln -s ~/.tfenv/bin/* /usr/local/bin
 RUN tfenv install 0.12.26
 RUN tfenv install 0.12.31
 RUN tfenv install 0.14.7
-RUN tfenv use 0.12.26
+RUN tfenv use 0.12.31
 
 # Copy over AWS STS AssumeRole scripts
 COPY bin /usr/local/bin
