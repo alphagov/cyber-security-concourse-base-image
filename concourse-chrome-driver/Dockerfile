@@ -1,4 +1,4 @@
-FROM amazonlinux:2
+FROM amazonlinux:latest
 
 WORKDIR /usr/src/app
 RUN yum install -y apt-utils zip unzip make
