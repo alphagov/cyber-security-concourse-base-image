@@ -44,6 +44,7 @@ resources:
     source:
       <<: *docker-creds
       repository: gdscyber/concourse-chrome-driver
+      tag: latest
 
 jobs:
   - name: update-pipeline
@@ -65,7 +66,7 @@ jobs:
     plan:
       - get: concourse-chrome-driver-image-git
         trigger: true
-        passed: 
+        passed:
         - update-pipeline
       - task: build
         privileged: true
