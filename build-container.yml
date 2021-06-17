@@ -1,0 +1,17 @@
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: vito/oci-build-task
+    username: ((docker_hub_username))
+    password: ((docker_hub_password))
+
+params:
+  DOCKERFILE:
+  CONTEXT:
+
+outputs:
+- name: image
+
+run:
+  path: build

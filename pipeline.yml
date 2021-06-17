@@ -222,20 +222,12 @@ jobs:
 
       - task: build
         privileged: true
-        config: &build-image-config
-          platform: linux
-          image_resource:
-            type: registry-image
-            source:
-              repository: vito/oci-build-task
-          params:
-            CONTEXT: concourse-base-image-git/
-          inputs:
-            - name: concourse-base-image-git
-          outputs:
-            - name: image
-          run:
-            path: build
+        file: concourse-base-image-git/build-container.yml
+        params:
+          CONTEXT: concourse-base-image-git/
+          DOCKERFILE: concourse-base-image-git/Dockerfile
+        inputs:
+          - name: concourse-base-image-git
         on_success:
           <<: *health_status_notify
           params:
@@ -246,7 +238,6 @@ jobs:
           params:
             message: "Cyber security concourse base image build failed."
             health: unhealthy
-
 
       - put: concourse-base-image-docker-hub
         params:
@@ -276,16 +267,12 @@ jobs:
 
       - task: build
         privileged: true
-        config:
-          <<: *build-image-config
-          params:
-            CONTEXT: load-testing-image-git/load_testing
-          inputs:
-            - name: load-testing-image-git
-          outputs:
-            - name: image
-          run:
-            path: build
+        file: concourse-base-image-git/build-container.yml
+        params:
+          CONTEXT: load-testing-image-git/load_testing
+          DOCKERFILE: load-testing-image-git/load_testing/Dockerfile
+        inputs:
+          - name: load-testing-image-git
         on_success:
           <<: *health_status_notify
           params:
@@ -314,24 +301,19 @@ jobs:
   - name: build-base-docker-image-amazonlinux2
     serial: false
     plan:
+      - get: concourse-base-image-git
+        trigger: false
+
       - get: concourse-base-image-git-amazonlinux2
         trigger: true
+
       - task: build
         privileged: true
-        config:
-          platform: linux
-          image_resource:
-            type: registry-image
-            source:
-              repository: vito/oci-build-task
-          params:
-            CONTEXT: concourse-base-image-git-amazonlinux2/amazonlinux2
-          inputs:
-            - name: concourse-base-image-git-amazonlinux2
-          outputs:
-            - name: image
-          run:
-            path: build
+        file: concourse-base-iamge-git/build-container.yml
+        params:
+          CONTEXT: concourse-base-image-git-amazonlinux2/amazonlinux2
+        inputs:
+          - name: concourse-base-image-git-amazonlinux2
         on_success:
           <<: *health_status_notify
           params:
@@ -342,7 +324,6 @@ jobs:
           params:
             message: "Cyber security concourse base image (Amazon Linux 2) build failed."
             health: unhealthy
-
 
       - put: concourse-base-image-docker-hub-amazonlinux2
         params:
@@ -372,16 +353,12 @@ jobs:
 
       - task: build
         privileged: true
-        config:
-          <<: *build-image-config
-          params:
-            CONTEXT: cloudwatch-health-image-git/docker/concourse-worker-health/
-          inputs:
-            - name: cloudwatch-health-image-git
-          outputs:
-            - name: image
-          run:
-            path: build
+        file: concourse-base-image-git/build-container.yml
+        params:
+          CONTEXT: cloudwatch-health-image-git/docker/concourse-worker-health/
+          DOCKERFILE: cloudwatch-health-image-git/docker/concourse-worker-health/Dockerfile
+        inputs:
+          - name: cloudwatch-health-image-git
         on_success:
           <<: *health_status_notify
           params:
@@ -421,20 +398,11 @@ jobs:
 
       - task: build
         privileged: true
-        config: &build-image-config
-          platform: linux
-          image_resource:
-            type: registry-image
-            source:
-              repository: vito/oci-build-task
-          params:
-            DOCKERFILE: csls-image-git/config/concourse/Dockerfile
-          inputs:
-            - name: csls-image-git
-          outputs:
-            - name: image
-          run:
-            path: build
+        params:
+          CONTEXT: csls-image-git/config/concourse/
+          DOCKERFILE: csls-image-git/config/concourse/Dockerfile
+        inputs:
+          - name: csls-image-git
         on_success:
           <<: *health_status_notify
           params:
@@ -468,16 +436,11 @@ jobs:
         trigger: true
       - task: build
         privileged: true
-        config:
-          <<: *build-image-config
-          params:
-            CONTEXT: gsuite-splunk-image-git/gds-gsuite-govuk-paas/
-          inputs:
-            - name: gsuite-splunk-image-git
-          outputs:
-            - name: image
-          run:
-            path: build
+        file: concourse-base-image-git/build-container.yml
+        params:
+          CONTEXT: gsuite-splunk-image-git/gds-gsuite-govuk-paas/
+        inputs:
+          - name: gsuite-splunk-image-git
         on_success:
           <<: *health_status_notify
           params:
@@ -511,16 +474,12 @@ jobs:
         trigger: true
       - task: build
         privileged: true
-        config:
-          <<: *build-image-config
-          params:
-            CONTEXT: salesforce-splunk-image-git/gds-salesforce-forwarder-paas/
-          inputs:
-            - name: salesforce-splunk-image-git
-          outputs:
-            - name: image
-          run:
-            path: build
+        file: concourse-base-image-git/build-container.yml
+        params:
+          CONTEXT: salesforce-splunk-image-git/gds-salesforce-forwarder-paas/
+          DOCKERFILE: salesforce-splunk-image-git/gds-salesforce-forwarder-paas/Dockerfile
+        inputs:
+          - name: salesforce-splunk-image-git
         on_success:
           <<: *health_status_notify
           params:
@@ -553,16 +512,12 @@ jobs:
         trigger: true
       - task: build
         privileged: true
-        config:
-          <<: *build-image-config
-          params:
-            CONTEXT: http-api-resource-git/docker/http-api-resource
-          inputs:
-            - name: http-api-resource-git
-          outputs:
-            - name: image
-          run:
-            path: build
+        file: concourse-base-image-git/build-container.yml
+        params:
+          CONTEXT: http-api-resource-git/docker/http-api-resource
+          DOCKERFILE: http-api-resource-git/docker/http-api-resource/Dockerfile
+        inputs:
+          - name: http-api-resource-git
         on_success:
           <<: *health_status_notify
           params:
@@ -601,17 +556,12 @@ jobs:
 
       - task: build
         privileged: true
-        config:
-          <<: *build-image-config
-          params:
-            CONTEXT: cyber-chalice-git/dockerfiles/chalice/
-          inputs:
-            - name: cyber-chalice-git
-          outputs:
-            - name: cyber-chalice-git # For the tags file
-            - name: image
-          run:
-            path: build
+        file: concourse-base-image-git/build-container.yml
+        params:
+          CONTEXT: cyber-chalice-git/dockerfiles/chalice/
+          DOCKERFILE: cyber-chalice-git/dockerfiles/chalice/Dockerfile
+        inputs:
+          - name: cyber-chalice-git
         on_success:
           <<: *health_status_notify
           params:
@@ -626,7 +576,6 @@ jobs:
       - put: cyber-chalice-image-docker-hub
         params:
           image: image/image.tar
-          additional_tags: cyber-chalice-git/dockerfiles/chalice/tags
         on_success:
           <<: *health_status_notify
           params:
@@ -651,17 +600,12 @@ jobs:
 
       - task: build
         privileged: true
-        config:
-          <<: *build-image-config
-          params:
-            CONTEXT: csw-image-git/dockerfiles/csw/
-          inputs:
-            - name: csw-image-git
-          outputs:
-            - name: cyber-chalice-git # For the tags file
-            - name: image
-          run:
-            path: build
+        file: concourse-base-image-git/build-container.yml
+        params:
+          CONTEXT: csw-image-git/dockerfiles/csw/
+          DOCKERFILE: csw-image-git/dockerfiles/csw/Dockerfile
+        inputs:
+          - name: csw-image-git
         on_success:
           <<: *health_status_notify
           params:
@@ -676,7 +620,6 @@ jobs:
       - put: csw-concourse-worker-image-docker-hub
         params:
           image: image/image.tar
-          additional_tags: csw-image-git/dockerfiles/csw/tags
         on_success:
           <<: *health_status_notify
           params:
