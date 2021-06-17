@@ -222,6 +222,7 @@ jobs:
 
       - task: build
         privileged: true
+        config:
         file: concourse-base-image-git/build-container.yml
         params:
           CONTEXT: concourse-base-image-git/
@@ -267,6 +268,7 @@ jobs:
 
       - task: build
         privileged: true
+        config:
         file: concourse-base-image-git/build-container.yml
         params:
           CONTEXT: load-testing-image-git/load_testing
@@ -309,6 +311,7 @@ jobs:
 
       - task: build
         privileged: true
+        config:
         file: concourse-base-iamge-git/build-container.yml
         params:
           CONTEXT: concourse-base-image-git-amazonlinux2/amazonlinux2
@@ -353,6 +356,7 @@ jobs:
 
       - task: build
         privileged: true
+        config:
         file: concourse-base-image-git/build-container.yml
         params:
           CONTEXT: cloudwatch-health-image-git/docker/concourse-worker-health/
@@ -398,6 +402,8 @@ jobs:
 
       - task: build
         privileged: true
+        file: concourse-base-image-git/build-container.yml
+        config:
         params:
           CONTEXT: csls-image-git/config/concourse/
           DOCKERFILE: csls-image-git/config/concourse/Dockerfile
@@ -436,6 +442,7 @@ jobs:
         trigger: true
       - task: build
         privileged: true
+        config:
         file: concourse-base-image-git/build-container.yml
         params:
           CONTEXT: gsuite-splunk-image-git/gds-gsuite-govuk-paas/
@@ -474,6 +481,7 @@ jobs:
         trigger: true
       - task: build
         privileged: true
+        config:
         file: concourse-base-image-git/build-container.yml
         params:
           CONTEXT: salesforce-splunk-image-git/gds-salesforce-forwarder-paas/
@@ -512,6 +520,7 @@ jobs:
         trigger: true
       - task: build
         privileged: true
+        config:
         file: concourse-base-image-git/build-container.yml
         params:
           CONTEXT: http-api-resource-git/docker/http-api-resource
@@ -556,6 +565,7 @@ jobs:
 
       - task: build
         privileged: true
+        config:
         file: concourse-base-image-git/build-container.yml
         params:
           CONTEXT: cyber-chalice-git/dockerfiles/chalice/
@@ -600,6 +610,7 @@ jobs:
 
       - task: build
         privileged: true
+        config:
         file: concourse-base-image-git/build-container.yml
         params:
           CONTEXT: csw-image-git/dockerfiles/csw/
