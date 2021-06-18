@@ -1,6 +1,6 @@
 FROM amazonlinux:2
 
-ENV TF_VERSION 0.12.26
+ENV TF_DEFAULT_VERSION 0.12.31
 
 # expect need local time zone
 ENV TZ=UTC
@@ -24,7 +24,10 @@ RUN alternatives --install /usr/bin/python python /usr/bin/python3.8 1 && \
 COPY bin /usr/local/bin
 RUN chmod +x /usr/local/bin/*.sh
 
-# install terraform
-ADD install_terraform.sh /tmp/install_terraform.sh
-WORKDIR /tmp
-RUN bash install_terraform.sh
+# Install tfenv
+RUN git clone https://github.com/tfutils/tfenv.git ~/.tfenv
+RUN ln -s ~/.tfenv/bin/* /usr/local/bin
+RUN tfenv install 0.12.26
+RUN tfenv install 0.12.31
+RUN tfenv install 0.14.7
+RUN tfenv use $TF_DEFAULT_VERSION
