@@ -5,13 +5,12 @@ image_resource:
     repository: vito/oci-build-task
     username: ((docker_hub_username))
     password: ((docker_hub_password))
-
 params:
   DOCKERFILE:
   CONTEXT:
-
+inputs:
+  - name: csw-image-git
 outputs:
-- name: image
-
+  - name: image
 run:
   path: build

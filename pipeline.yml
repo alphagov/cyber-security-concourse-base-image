@@ -615,8 +615,6 @@ jobs:
         params:
           CONTEXT: csw-image-git/dockerfiles/csw/
           DOCKERFILE: csw-image-git/dockerfiles/csw/Dockerfile
-        inputs:
-          - name: csw-image-git
         on_success:
           <<: *health_status_notify
           params:
