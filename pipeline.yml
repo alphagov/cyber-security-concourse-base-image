@@ -34,7 +34,7 @@ resources:
   - name: concourse-base-image-pipeline-git
     type: git
     source:
-      branch: master
+      branch: refactor-pipeline-into-tasks
       paths:
         - pipeline.yml
       uri: https://github.com/alphagov/cyber-security-concourse-base-image.git
