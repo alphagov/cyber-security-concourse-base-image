@@ -1,6 +1,6 @@
 resource "aws_codepipeline" "concourse-cd-images" {
   name     = "concourse-cd-images"
-  role_arn = data.aws_iam_role.pipeline_role.arn # TODO
+  role_arn = data.aws_iam_role.pipeline_role.arn
 
   artifact_store {
     type     = "S3"
