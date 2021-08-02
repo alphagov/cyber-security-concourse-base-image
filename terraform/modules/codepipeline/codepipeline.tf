@@ -39,7 +39,7 @@ resource "aws_codepipeline" "concourse-cd-images" {
       output_artifacts = []
 
       configuration = {
-        ProjectName = aws_codebuild_project.code_pipeline_self_update.name # TODO
+        ProjectName = module.codebuild-self-update.project_name
       }
     }
   }
