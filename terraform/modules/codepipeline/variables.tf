@@ -9,5 +9,10 @@ variable "codestar_connection_id" {
 
 variable "codebuild_service_role_name" {
   description = "the role code build uses to access other AWS services"
-  type = string
+  type        = string
+}
+
+variable "environment" {
+  type    = string
+  default = "test"
 }

@@ -1,6 +1,7 @@
-resource "aws_codepipeline" "concourse-cd-images" {
-  name     = "concourse-cd-images"
+resource "aws_codepipeline" "cd-images-pipeline" {
+  name     = "cd-images-pipeline"
   role_arn = data.aws_iam_role.pipeline_role.arn
+  tags     = merge(local.tags, { Name = "cd-images-pipeline" })
 
   artifact_store {
     type     = "S3"
