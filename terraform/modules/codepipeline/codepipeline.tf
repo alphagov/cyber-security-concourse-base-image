@@ -45,22 +45,22 @@ resource "aws_codepipeline" "cd-images-pipeline" {
     }
   }
 
-  #stage {
-  #  name = "CdBaseImageDockerBuild"
+  stage {
+    name = "CdBaseImageDockerBuildPush"
 
-  #  action {
-  #    name             = "CdBaseImageDockerBuild"
-  #    category         = "Build"
-  #    owner            = "AWS"
-  #    provider         = "CodeBuild"
-  #    version          = "1"
-  #    run_order        = 2
-  #    input_artifacts  = ["git_base_image"]
-  #    output_artifacts = []
+    action {
+      name             = "CdBaseImageDockerBuild"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 2
+      input_artifacts  = ["git_base_image"]
+      output_artifacts = []
 
-  #    configuration = {
-  #      ProjectName          = aws_codebuild_project.code_pipeline_keycloak_config_ecr_test.name # TODO
-  #    }
-  #  }
-  #}
+      configuration = {
+        ProjectName = module.codebuild-dockerhub-build.project_name
+      }
+    }
+  }
 }
