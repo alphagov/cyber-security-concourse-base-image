@@ -12,9 +12,12 @@ variable "codebuild_service_role_name" {
   type        = string
 }
 
-variable "docker_credentials_secret_name" {
-  description = "Name of the SSM parameter that has the DockerHub credentials, in JSON form"
-  type        = string
+variable "docker_hub_username" {
+  type = string
+}
+
+variable "docker_hub_password" {
+  type = string
 }
 
 variable "environment" {
@@ -23,6 +26,6 @@ variable "environment" {
 }
 
 variable "pipeline_name" {
-  type = string
+  type    = string
   default = "cd-images-pipeline"
 }
