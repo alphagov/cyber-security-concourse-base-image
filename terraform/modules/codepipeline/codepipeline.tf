@@ -46,20 +46,35 @@ resource "aws_codepipeline" "cd-container-images" {
   }
 
   stage {
-    name = "CdBaseImageDockerBuildPush"
+    name = "BuildAndPushCdImage"
 
     action {
-      name             = "CdBaseImageDockerBuild"
+      name             = "DockerHub"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
-      run_order        = 2
+      run_order        = 1
       input_artifacts  = ["git_base_image"]
       output_artifacts = []
 
       configuration = {
         ProjectName = module.codebuild-dockerhub-build.project_name
+      }
+    }
+
+    action {
+      name             = "Ecr"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 1
+      input_artifacts  = ["git_base_image"]
+      output_artifacts = []
+
+      configuration = {
+        ProjectName = module.codebuild-ecr.project_name
       }
     }
   }
