@@ -1,11 +1,11 @@
-resource "aws_codepipeline" "cd-images-pipeline" {
+resource "aws_codepipeline" "cd-container-images" {
   name     = var.pipeline_name
   role_arn = data.aws_iam_role.pipeline_role.arn
-  tags     = merge(local.tags, { Name = "cd-images-pipeline" })
+  tags     = merge(local.tags, { Name = var.pipeline_name })
 
   artifact_store {
     type     = "S3"
-    location = data.aws_s3_bucket.artifact_store.bucket # TODO
+    location = data.aws_s3_bucket.artifact_store.bucket
   }
 
   stage {

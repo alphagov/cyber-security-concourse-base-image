@@ -27,5 +27,5 @@ variable "environment" {
 
 variable "pipeline_name" {
   type    = string
-  default = "cd-images-pipeline"
+  default = "cd-container-images"
 }
