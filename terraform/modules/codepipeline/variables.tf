@@ -12,12 +12,9 @@ variable "codebuild_service_role_name" {
   type        = string
 }
 
-variable "docker_hub_username" {
-  type = string
-}
-
-variable "docker_hub_password" {
-  type = string
+variable "docker_hub_credentials" {
+  description = "Name of the secret in SSM that stores the Docker Hub credentials"
+  type        = string
 }
 
 variable "environment" {

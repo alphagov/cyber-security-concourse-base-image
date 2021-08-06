@@ -7,5 +7,5 @@ module "codebuild-self-update" {
   codebuild_image             = "gdscyber/cyber-security-concourse-base-image:latest"
   pipeline_name               = var.pipeline_name
   environment                 = var.environment
-  docker_hub_credentials      = "docker_hub_credentials"
+  docker_hub_credentials      = var.docker_hub_credentials
 }

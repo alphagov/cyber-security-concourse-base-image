@@ -4,8 +4,7 @@ module "codepipeline" {
   staging_account_id          = "103495720024"
   codebuild_service_role_name = "CodePipelineExecutionRole"
   environment                 = "test"
-  docker_hub_username         = data.aws_ssm_parameter.docker_hub_username.value
-  docker_hub_password         = data.aws_ssm_parameter.docker_hub_password.value
+  docker_hub_credentials      = "docker_hub_credentials"
 }
 
 data "aws_ssm_parameter" "docker_hub_username" {

@@ -4,8 +4,8 @@ module "codebuild-dockerhub-build" {
   docker_hub_repo     = "gdscyber/cyber-security-cd-base-image"
   build_context       = "."
   dockerfile          = "Dockerfile"
-  docker_hub_username = var.docker_hub_username
-  docker_hub_password = var.docker_hub_password
+  docker_hub_username = local.docker_hub_username
+  docker_hub_password = local.docker_hub_password
   pipeline_name       = var.pipeline_name
   environment         = var.environment
 }

@@ -6,6 +6,8 @@ module "codebuild-ecr" {
   ecr_context                 = "."
   ecr_dockerfile              = "Dockerfile"
   ecr_image_repo_name         = "cyber-security-cd-base-image"
+  docker_hub_username         = local.docker_hub_username
+  docker_hub_password         = local.docker_hub_password
   pipeline_name               = var.pipeline_name
   environment                 = var.environment
 }
