@@ -6,11 +6,3 @@ module "codepipeline" {
   environment                 = "test"
   docker_hub_credentials      = "docker_hub_credentials"
 }
-
-data "aws_ssm_parameter" "docker_hub_username" {
-  name = "/docker/hub/user"
-}
-
-data "aws_ssm_parameter" "docker_hub_password" {
-  name = "/docker/hub/password"
-}
