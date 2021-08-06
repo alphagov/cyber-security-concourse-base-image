@@ -1,5 +1,5 @@
 resource "aws_codepipeline" "cd-container-images" {
-  name     = var.pipeline_name
+  name     = "${var.pipeline_name}-${var.environment}"
   role_arn = data.aws_iam_role.pipeline_role.arn
   tags     = merge(local.tags, { Name = var.pipeline_name })
 
