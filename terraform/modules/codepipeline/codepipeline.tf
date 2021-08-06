@@ -1,7 +1,7 @@
 resource "aws_codepipeline" "cd-container-images" {
   name     = "${var.pipeline_name}-${var.environment}"
   role_arn = data.aws_iam_role.pipeline_role.arn
-  tags     = merge(local.tags, { Name = var.pipeline_name })
+  tags     = merge(local.tags, { Name = "${var.pipeline_name}-${var.environment}" })
 
   artifact_store {
     type     = "S3"
