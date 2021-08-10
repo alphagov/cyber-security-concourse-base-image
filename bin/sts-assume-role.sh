@@ -10,10 +10,11 @@ fi
 
 role_arn="$1"
 region="$2"
+duration"$3"
 temp_role=$(aws sts assume-role \
                     --role-arn "${role_arn}" \
                     --role-session-name "concourse-task" \
-                    --duration 1800)
+                    --duration ${duration:-1800})
 
 # Store the lambda exec role AWS credentials to be restored
 export ASSUMED_SESSION="true"
