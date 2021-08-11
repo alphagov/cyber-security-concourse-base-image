@@ -74,7 +74,7 @@ resource "aws_codepipeline" "cd-container-images" {
       version          = "1"
       run_order        = 1
       input_artifacts  = ["git_base_image"]
-      output_artifacts = []
+      output_artifacts = ["git-diff-file"]
 
       configuration = {
         ProjectName = module.codebuild-dockerhub-build.project_name
