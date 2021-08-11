@@ -4,4 +4,5 @@ module "codepipeline" {
   codebuild_service_role_name = "CodePipelineExecutionRole"
   environment                 = "test"
   docker_hub_credentials      = "docker_hub_credentials"
+  github_pat                  = "/github/pat"
 }

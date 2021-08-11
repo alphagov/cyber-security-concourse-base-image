@@ -21,3 +21,8 @@ variable "pipeline_name" {
   type    = string
   default = "cd-container-images"
 }
+
+variable "github_pat" {
+  description = "the github pat token to authorise access to the repo. "
+  type        = string
+}

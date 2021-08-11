@@ -46,6 +46,24 @@ resource "aws_codepipeline" "cd-container-images" {
   }
 
   stage {
+    name = "CheckGitDiff"
+
+    action {
+      name             = "CheckGitDiff"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      input_artifacts  = ["git_base_image"]
+      output_artifacts = []
+
+      configuration = {
+        ProjectName = module.codebuild-git-diff.project_name
+      }
+    }
+  }
+
+  stage {
     name = "BuildAndPushCdImage"
 
     action {
