@@ -9,11 +9,13 @@ if [[ -n "$ASSUMED_SESSION" ]]; then
 fi
 
 role_arn="$1"
-region="$2"
+region=${2:-eu-west-2} # Default to London
+duration=${3:-2400}    # Default to 45 minutes
+
 temp_role=$(aws sts assume-role \
                     --role-arn "${role_arn}" \
                     --role-session-name "concourse-task" \
-                    --duration 1800)
+                    --duration ${duration})
 
 # Store the lambda exec role AWS credentials to be restored
 export ASSUMED_SESSION="true"
@@ -21,4 +23,4 @@ export ASSUMED_SESSION="true"
 export AWS_ACCESS_KEY_ID=$(echo $temp_role | jq .Credentials.AccessKeyId | xargs)
 export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | jq .Credentials.SecretAccessKey | xargs)
 export AWS_SESSION_TOKEN=$(echo $temp_role | jq .Credentials.SessionToken | xargs)
-export AWS_DEFAULT_REGION=${region:-eu-west-2}
+export AWS_DEFAULT_REGION=${region}
