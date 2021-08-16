@@ -30,14 +30,11 @@ EOM
 		exit
 else
     json=$(call_github_api "/repos/${github_org}/${repo_name}/pulls?state=closed" 1)
-    clear
     echo "Get latest merged PR into main/master branch"
     latest_pull=$(echo $json | jq '[.[] | select(.merged_at != null) | select(.base.ref == "main" or .base.ref == "master")][0] | .number')
-    clear
     echo "Get list of changed file for PR: $latest_pull"
     json=$(call_github_api "/repos/${github_org}/${repo_name}/pulls/${latest_pull}/files" 1)
     files=$(echo $json | jq '[.[] | .filename]')
-    clear
     echo "Changed files for $repo_name PR:$latest_pull"
     echo $files > $output_file
     echo $files
