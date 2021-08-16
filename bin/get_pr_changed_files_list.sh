@@ -2,9 +2,9 @@
 # Use Github REST API to get list of changed files from most recent Pull request
 
 # Usage:
-#  export GITHUB_PATH=[token]
+#  export GITHUB_PAT=[token]
 #  export GITHUB_ORG=[orgname]
-# github_rest_get_pr_changed_files_list.sh [repo_name] [output_filename]
+# get_pr_changed_files_list.sh [repo_name] [output_filename]
 
 github_org=$GITHUB_ORG
 repo_name=$1
