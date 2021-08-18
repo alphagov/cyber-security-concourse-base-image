@@ -17,8 +17,8 @@ function call_github_api() {
   output_file=$3
   url="https://api.github.com${path}" #"?page=${page}"
   accept="application/vnd.github.v3+json"
-	output=$(curl -H "Authorization: token ${GITHUB_PAT}" -H "Accept: ${accept}" ${url} -o ${output_file})
-  echo $output
+	echo $(curl -H "Authorization: token ${GITHUB_PAT}" -H "Accept: ${accept}" ${url}) > ${output_file}
+  # echo $output
 }
 
 if [[ $repo_name == "-h" ]]; then
