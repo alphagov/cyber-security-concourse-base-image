@@ -71,6 +71,7 @@ RUN tfenv use 0.12.31
 # Copy over AWS STS AssumeRole scripts
 COPY bin /usr/local/bin
 RUN chmod +x /usr/local/bin/*.sh
+RUN chmod +x /usr/local/bin/*.py
 
 # Install pyenv
 RUN git clone https://github.com/pyenv/pyenv.git /root/.pyenv
