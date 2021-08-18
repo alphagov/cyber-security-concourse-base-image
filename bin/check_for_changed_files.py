@@ -22,6 +22,6 @@ def main():
     context_files = os.getenv("CONTEXT_FILE_LIST")
     context_files_updated = bool(set(changed_files).intersection(context_files))
 
-    write_json_to_file(source_path + "rebuild_task.json", context_files_updated)
+    write_json_to_file(source_path + "/rebuild_task.json", context_files_updated)
 
 main()
