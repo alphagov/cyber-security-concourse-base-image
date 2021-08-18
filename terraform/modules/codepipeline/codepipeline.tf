@@ -21,7 +21,7 @@ resource "aws_codepipeline" "cd-container-images" {
       configuration = {
         ConnectionArn    = "arn:aws:codestar-connections:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:connection/${var.codestar_connection_id}"
         FullRepositoryId = "alphagov/cyber-security-concourse-base-image"
-        BranchName       = "cd-images-pipeline"
+        BranchName       = "master"
       }
     }
   }
@@ -46,6 +46,23 @@ resource "aws_codepipeline" "cd-container-images" {
   }
 
   stage {
+    name = "CheckGitDiff"
+
+    action {
+      name             = "CheckGitDiff"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      input_artifacts  = ["git_base_image"]
+      output_artifacts = ["git_diff_file"]
+      configuration = {
+        ProjectName = module.codebuild-git-diff.project_name
+      }
+    }
+  }
+
+  stage {
     name = "BuildAndPushCdImage"
 
     action {
@@ -55,11 +72,12 @@ resource "aws_codepipeline" "cd-container-images" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["git_base_image"]
+      input_artifacts  = ["git_base_image", "git_diff_file"]
       output_artifacts = []
 
       configuration = {
-        ProjectName = module.codebuild-dockerhub-build.project_name
+        PrimarySource = "git_base_image"
+        ProjectName   = module.codebuild-dockerhub-build.project_name
       }
     }
 
@@ -70,11 +88,12 @@ resource "aws_codepipeline" "cd-container-images" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["git_base_image"]
+      input_artifacts  = ["git_base_image", "git_diff_file"]
       output_artifacts = []
 
       configuration = {
-        ProjectName = module.codebuild-ecr.project_name
+        PrimarySource = "git_base_image"
+        ProjectName   = module.codebuild-ecr.project_name
       }
     }
   }
