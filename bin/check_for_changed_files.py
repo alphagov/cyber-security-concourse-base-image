@@ -13,7 +13,7 @@ def write_json_to_file(file: str, data: bool):
         json.dump(data, outfile)
 
 
-def is_prefix_of_any(context_files, changed_files):
+def does_path_exist_in_changed_files(context_files, changed_files) -> bool:
     return any([
         context_file
         for context_file in context_files
@@ -29,8 +29,8 @@ def main():
     changed_files = get_json_from_file(git_diff_file)
 
     context_files = os.getenv("CONTEXT_FILE_LIST")
-    context_files_updated = bool(set(changed_files).intersection(context_files))
-
+    context_files_updated = does_path_exist_in_changed_files(context_files, changed_files)
+    print(f"setting rebuild_task to {context_files_updated}")
     write_json_to_file(source_path + "/rebuild_task.json", context_files_updated)
 
 
