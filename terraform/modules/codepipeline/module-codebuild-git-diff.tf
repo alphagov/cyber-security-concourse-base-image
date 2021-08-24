@@ -12,4 +12,5 @@ module "codebuild-git-diff" {
   docker_hub_credentials      = var.docker_hub_credentials
   output_artifact_path        = "cd-images-pipeline/output-artifacts"
   artifact_bucket             = data.aws_s3_bucket.artifact_store.bucket
+  context_file_list           = jsonencode("[\"Dockerfile\", \"bin/\"]")
 }

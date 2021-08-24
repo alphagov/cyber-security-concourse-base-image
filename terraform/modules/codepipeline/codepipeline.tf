@@ -46,10 +46,10 @@ resource "aws_codepipeline" "cd-container-images" {
   }
 
   stage {
-    name = "CheckGitDiff"
+    name = "GetChangedFiles"
 
     action {
-      name             = "CheckGitDiff"
+      name             = "GetChangedFiles"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
