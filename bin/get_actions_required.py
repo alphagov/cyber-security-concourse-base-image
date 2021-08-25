@@ -34,7 +34,7 @@ def main():
     actions_triggers_content = get_json_from_file(actions_triggers_path)
     actions_required = [
         {
-            "stage": trigger["stage"],
+            "action": trigger["action"],
             "required": does_path_exist_in_changed_files(
                 trigger["trigger_paths"], changed_files_content
             ),
