@@ -55,7 +55,7 @@ resource "aws_codepipeline" "cd-container-images" {
       provider         = "CodeBuild"
       version          = "1"
       input_artifacts  = ["git_base_image"]
-      output_artifacts = ["git_diff_file"]
+      output_artifacts = ["rebuild_task"]
       configuration = {
         ProjectName = module.codebuild-git-diff.project_name
       }
@@ -72,7 +72,7 @@ resource "aws_codepipeline" "cd-container-images" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["git_base_image", "git_diff_file"]
+      input_artifacts  = ["git_base_image", "rebuild_task"]
       output_artifacts = []
 
       configuration = {
@@ -88,7 +88,7 @@ resource "aws_codepipeline" "cd-container-images" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["git_base_image", "git_diff_file"]
+      input_artifacts  = ["git_base_image", "rebuild_task"]
       output_artifacts = []
 
       configuration = {
