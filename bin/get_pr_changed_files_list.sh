@@ -30,7 +30,7 @@ if [[ $repo_name == "-h" ]]; then
 EOM
 		exit
 else
-    call_github_api "/repos/${github_org}/${repo_name}/pulls?state=closed" 1 "closed_pulls.json"
+    call_github_api "/repos/${github_org}/${repo_name}/pulls?state=closed&sort=updated&direction=desc" 1 "closed_pulls.json"
     echo "Get latest merged PR into main/master branch"
     latest_pull=$(jq '[.[] | select(.merged_at != null) | select(.base.ref == "main" or .base.ref == "master")][0] | .number' closed_pulls.json)
     echo "Get list of changed file for PR: $latest_pull"
