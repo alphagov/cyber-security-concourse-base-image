@@ -26,8 +26,8 @@ def does_path_exist_in_changed_files(action_triggers, changed_files) -> bool:
 def main():
     source_path = os.getenv("CODEBUILD_SRC_DIR")
 
-    changed_files = os.getenv("OUTPUT_FILENAME")
-    changed_files_content = get_json_from_file(changed_files)
+    changed_files = os.getenv("$CODEBUILD_SRC_DIR_changed_files")
+    changed_files_content = get_json_from_file(changed_files + "/changed_files.json")
 
     actions_triggers = os.getenv("ACTION_TRIGGERS")
     actions_triggers_path = source_path + actions_triggers

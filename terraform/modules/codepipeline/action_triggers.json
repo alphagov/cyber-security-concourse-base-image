@@ -1,0 +1,16 @@
+[
+    {
+       "action": "build-keycloak-runtime-container", 
+       "trigger_paths": [
+          "Dockerfile",
+          "runtime/context"
+        ]
+      },
+      {
+         "action": "build-keycloak-config-container", 
+         "trigger_paths": [
+           "keycloak-config/Dockerfile", 
+           "keycloak-config/context"
+         ]
+     }
+  ]
