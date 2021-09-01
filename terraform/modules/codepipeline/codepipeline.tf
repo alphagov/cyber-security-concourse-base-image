@@ -46,21 +46,40 @@ resource "aws_codepipeline" "cd-container-images" {
   }
 
   stage {
-    name = "CheckGitDiff"
+    name = "GetChangedFiles"
 
     action {
-      name             = "CheckGitDiff"
+      name             = "GetChangedFiles"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
       input_artifacts  = ["git_base_image"]
-      output_artifacts = ["git_diff_file"]
+      output_artifacts = ["changed_files"]
       configuration = {
         ProjectName = module.codebuild-git-diff.project_name
       }
     }
   }
+
+  stage {
+    name = "GetActionsRequired"
+
+    action {
+      name             = "GetActionsRequired"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      input_artifacts  = ["git_base_image", "changed_files"]
+      output_artifacts = ["actions_required"]
+      configuration = {
+        PrimarySource = "git_base_image"
+        ProjectName = module.codebuild-get-actions-required.project_name
+      }
+    }
+  }
+
 
   stage {
     name = "BuildAndPushCdImage"
@@ -72,12 +91,13 @@ resource "aws_codepipeline" "cd-container-images" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["git_base_image", "git_diff_file"]
+      input_artifacts  = ["git_base_image", "actions_required"]
       output_artifacts = []
 
       configuration = {
         PrimarySource = "git_base_image"
         ProjectName   = module.codebuild-dockerhub-build.project_name
+        EnvironmentVariables = jsonencode([{"name": "CHECK_TRIGGER", "value": 1}, {"name":"ACTION_NAME", "value": "BuildAndPushCdImage"}])
       }
     }
 
@@ -88,12 +108,13 @@ resource "aws_codepipeline" "cd-container-images" {
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["git_base_image", "git_diff_file"]
+      input_artifacts  = ["git_base_image", "actions_required"]
       output_artifacts = []
 
       configuration = {
         PrimarySource = "git_base_image"
         ProjectName   = module.codebuild-ecr.project_name
+        EnvironmentVariables = jsonencode([{"name": "CHECK_TRIGGER", "value": 1}, {"name":"ACTION_NAME", "value": "BuildAndPushCdImage"}])
       }
     }
   }
