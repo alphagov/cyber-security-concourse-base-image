@@ -96,7 +96,7 @@ resource "aws_codepipeline" "cd-container-images" {
 
       configuration = {
         PrimarySource = "git_base_image"
-        ProjectName   = module.codebuild-dockerhub-build.project_name
+        ProjectName   = module.codebuild-build-container-docker-hub.project_name
         EnvironmentVariables = jsonencode([{"name": "CHECK_TRIGGER", "value": 1}, {"name":"ACTION_NAME", "value": "BuildAndPushCdImage"}])
       }
     }
