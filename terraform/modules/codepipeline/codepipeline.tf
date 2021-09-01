@@ -57,7 +57,7 @@ resource "aws_codepipeline" "cd-container-images" {
       input_artifacts  = ["git_base_image"]
       output_artifacts = ["changed_files"]
       configuration = {
-        ProjectName = module.codebuild-git-diff.project_name
+        ProjectName = module.codebuild-get-changed-file-list.project_name
       }
     }
   }
