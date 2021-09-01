@@ -75,7 +75,7 @@ resource "aws_codepipeline" "cd-container-images" {
       output_artifacts = ["actions_required"]
       configuration = {
         PrimarySource = "git_base_image"
-        ProjectName = module.codebuild-git-diff.project_name
+        ProjectName = module.codebuild-get-actions-required.project_name
       }
     }
   }
@@ -97,7 +97,7 @@ resource "aws_codepipeline" "cd-container-images" {
       configuration = {
         PrimarySource = "git_base_image"
         ProjectName   = module.codebuild-dockerhub-build.project_name
-        EnvironmentVariables = jsonencode([{"name": "CHECK_TRIGGER": "value": 1, "name":"ACTION_NAME", "value": "BuildAndPushCdImage"}])
+        EnvironmentVariables = jsonencode([{"name": "CHECK_TRIGGER", "value": 1}, {"name":"ACTION_NAME", "value": "BuildAndPushCdImage"}])
       }
     }
 
@@ -114,7 +114,7 @@ resource "aws_codepipeline" "cd-container-images" {
       configuration = {
         PrimarySource = "git_base_image"
         ProjectName   = module.codebuild-ecr.project_name
-        EnvironmentVariables = jsonencode([{"name": "CHECK_TRIGGER": "value": 1, "name":"ACTION_NAME", "value": "BuildAndPushCdImage"}])
+        EnvironmentVariables = jsonencode([{"name": "CHECK_TRIGGER", "value": 1}, {"name":"ACTION_NAME", "value": "BuildAndPushCdImage"}])
       }
     }
   }
