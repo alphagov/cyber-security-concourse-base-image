@@ -8,4 +8,5 @@ module "codebuild-build-container-docker-hub" {
   docker_hub_password = local.docker_hub_password
   pipeline_name       = var.pipeline_name
   environment         = var.environment
+  tags                = local.tags
 }
