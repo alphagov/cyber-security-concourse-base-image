@@ -1,5 +1,5 @@
 module "codebuild-self-update" {
-  source                      = "github.com/alphagov/cyber-security-shared-terraform-modules//codebuild/codebuild_terraform_apply"
+  source                      = "github.com/alphagov/cyber-security-shared-terraform-modules//codebuild/codebuild_apply_terraform"
   codebuild_service_role_name = var.codebuild_service_role_name
   deployment_account_id       = data.aws_caller_identity.current.account_id
   deployment_role_name        = "CodePipelineDeployerRole_${data.aws_caller_identity.current.account_id}"
