@@ -5,8 +5,8 @@ module "codebuild-get-changed-file-list" {
   deployment_role_name        = "CodePipelineDeployerRole_${data.aws_caller_identity.current.account_id}"
   codebuild_image             = var.codebuild_image
   pipeline_name               = var.pipeline_name
-  stage_name                  = "changes"
-  action_name                 = "get-changed-files"
+  stage_name                  = "Changes"
+  action_name                 = "GetChangedFiles"
   environment                 = var.environment
   github_pat                  = var.github_pat
   repo_name                   = var.repo_name
