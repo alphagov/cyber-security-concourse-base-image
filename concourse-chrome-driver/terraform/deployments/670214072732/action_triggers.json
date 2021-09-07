@@ -1,0 +1,9 @@
+[
+  {
+      "action": "BuildAndPushCdImage", 
+      "trigger_paths": [
+        "Dockerfile",
+	"bin"
+      ]
+  }
+] 

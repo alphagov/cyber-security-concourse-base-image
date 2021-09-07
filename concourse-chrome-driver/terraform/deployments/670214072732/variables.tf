@@ -12,13 +12,25 @@ variable "codebuild_service_role_name" {
 variable "docker_hub_repo" {
   description = "Docker Hub repository"
   type        = string
-  default     = "gdscyber/cd-chrome-driver"
+  default     = ""
 }
 
 variable "docker_hub_credentials" {
   description = "Name of the secret in SSM that stores the Docker Hub credentials"
   type        = string
   default     = "docker_hub_credentials"
+}
+
+variable "stage_name" {
+  description = "The name of the pipeline stage"
+  type        = string
+  default     = ""
+}
+
+variable "action_name" {
+  description = "The name of the pipeline stage action"
+  type        = string
+  default     = ""
 }
 
 variable "dockerfile" {
@@ -34,7 +46,7 @@ variable "codebuild_image" {
 variable "build_context" {
   description = "Path to the folder to run docker build from"
   type        = string
-  default     = "concourse-chrome-driver-image-git/concourse-chrome-driver/"
+  default     = "concourse-chrome-driver/"
 }
 
 variable "output_artifact_path" {

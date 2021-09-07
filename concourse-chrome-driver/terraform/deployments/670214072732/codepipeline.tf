@@ -21,14 +21,14 @@ resource "aws_codepipeline" "cd-chrome-driver" {
       configuration = {
         ConnectionArn    = "arn:aws:codestar-connections:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:connection/${var.codestar_connection_id}"
         FullRepositoryId = "alphagov/cyber-security-concourse-base-image"
-        BranchName       = "CE-256-migrate-pipeline"
+        BranchName       = "master"
       }
     }
   }
 
 
   stage {
-    name = "GetChangedFiles"
+    name = "Changes"
 
     action {
       name             = "GetChangedFiles"
@@ -45,7 +45,7 @@ resource "aws_codepipeline" "cd-chrome-driver" {
   }
 
   stage {
-    name = "GetActionsRequired"
+    name = "Actions"
 
     action {
       name             = "GetActionsRequired"
@@ -63,10 +63,10 @@ resource "aws_codepipeline" "cd-chrome-driver" {
   }
 
   stage {
-    name = "BuildAndPushCdImage"
+    name = "BuildDockerImages"
 
     action {
-      name             = "DockerHub"
+      name             = "BuildAndPushCdImage"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
@@ -77,27 +77,25 @@ resource "aws_codepipeline" "cd-chrome-driver" {
 
       configuration = {
         PrimarySource        = "git_base_image"
-        ProjectName          = module.codebuild-build-container-docker-hub.project_name
+        ProjectName          = module.codebuild-build-container-docker-hub-cd.project_name
         EnvironmentVariables = jsonencode([{ "name" : "CHECK_TRIGGER", "value" : 1 }, { "name" : "ACTION_NAME", "value" : "BuildAndPushCdImage" }])
       }
     }
-  }
-
-  stage {
-    name = "Build"
 
     action {
-      name             = "UpdatePipeline"
+      name             = "BuildAndPushConcourseImage"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
       version          = "1"
       run_order        = 1
-      input_artifacts  = ["git_base_image"]
+      input_artifacts  = ["git_base_image", "actions_required"]
       output_artifacts = []
 
       configuration = {
-        ProjectName = module.codebuild-self-update.project_name
+        PrimarySource        = "git_base_image"
+        ProjectName          = module.codebuild-build-container-docker-hub-concourse.project_name
+        EnvironmentVariables = jsonencode([{ "name" : "CHECK_TRIGGER", "value" : 1 }, { "name" : "ACTION_NAME", "value" : "BuildAndPushCdImage" }])
       }
     }
   }

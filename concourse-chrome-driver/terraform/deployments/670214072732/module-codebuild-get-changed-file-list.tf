@@ -5,11 +5,12 @@ module "codebuild-get-changed-file-list" {
   deployment_role_name        = "CodePipelineDeployerRole_${data.aws_caller_identity.current.account_id}"
   codebuild_image             = var.codebuild_image
   pipeline_name               = var.pipeline_name
+  stage_name                  = "changes"
+  action_name                 = "get-changed-files"
   environment                 = var.environment
   github_pat                  = var.github_pat
   repo_name                   = var.repo_name
-  #output_filename             = "actions_required.json"
-  docker_hub_credentials = var.docker_hub_credentials
-  output_artifact_path   = var.output_artifact_path
-  artifact_bucket        = data.aws_s3_bucket.artifact_store.bucket
+  docker_hub_credentials      = var.docker_hub_credentials
+  output_artifact_path        = var.output_artifact_path
+  artifact_bucket             = data.aws_s3_bucket.artifact_store.bucket
 }
