@@ -5,6 +5,8 @@ module "codebuild-get-actions-required" {
   deployment_role_name        = "CodePipelineDeployerRole_${data.aws_caller_identity.current.account_id}"
   codebuild_image             = "gdscyber/cyber-security-cd-base-image:latest"
   pipeline_name               = var.pipeline_name
+  stage_name                  = "Actions"
+  action_name                 = "GetActionsRequired"
   environment                 = var.environment
   output_artifact_path        = "cd-images-pipeline/output-artifacts"
   artifact_bucket             = data.aws_s3_bucket.artifact_store.bucket

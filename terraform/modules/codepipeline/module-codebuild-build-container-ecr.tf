@@ -6,6 +6,8 @@ module "codebuild-build-container-ecr" {
   build_context               = "."
   dockerfile                  = "Dockerfile"
   ecr_image_repo_name         = "cyber-security-cd-base-image"
+  stage_name                  = "BuildAndPushCdImage"
+  action_name                 = "Ecr"
   docker_hub_username         = local.docker_hub_username
   docker_hub_password         = local.docker_hub_password
   pipeline_name               = var.pipeline_name

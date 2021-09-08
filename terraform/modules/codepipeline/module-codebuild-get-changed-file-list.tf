@@ -7,6 +7,8 @@ module "codebuild-get-changed-file-list" {
   pipeline_name               = var.pipeline_name
   environment                 = var.environment
   github_pat                  = var.github_pat
+  stage_name                  = "Changes"
+  action_name                 = "GetChangedFiles"
   repo_name                   = "cyber-security-concourse-base-image"
   docker_hub_credentials      = var.docker_hub_credentials
   output_artifact_path        = "cd-images-pipeline/output-artifacts"
