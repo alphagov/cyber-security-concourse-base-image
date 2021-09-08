@@ -1,6 +1,6 @@
 module "codebuild-build-container-docker-hub-cd" {
   source              = "github.com/alphagov/cyber-security-shared-terraform-modules//codebuild/codebuild_build_container_docker_hub"
-  stage_name          = "CodepipelineDockerImage"
+  stage_name          = "BuildDockerImages"
   action_name         = "BuildAndPushCdImage"
   service_role_name   = var.codebuild_service_role_name
   docker_hub_repo     = "gdscyber/cd-chrome-driver"

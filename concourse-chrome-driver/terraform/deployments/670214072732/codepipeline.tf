@@ -95,7 +95,24 @@ resource "aws_codepipeline" "cd-chrome-driver" {
       configuration = {
         PrimarySource        = "git_base_image"
         ProjectName          = module.codebuild-build-container-docker-hub-concourse.project_name
-        EnvironmentVariables = jsonencode([{ "name" : "CHECK_TRIGGER", "value" : 1 }, { "name" : "ACTION_NAME", "value" : "BuildAndPushCdImage" }])
+        EnvironmentVariables = jsonencode([{ "name" : "CHECK_TRIGGER", "value" : 1 }, { "name" : "ACTION_NAME", "value" : "BuildAndPushConcourseImage" }])
+      }
+    }
+  }
+
+  stage {
+    name = "Update"
+
+    action {
+      name             = "UpdatePipeline"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      input_artifacts  = ["git_base_image"]
+      output_artifacts = ["terraform_output"]
+      configuration = {
+        ProjectName = module.codebuild-self-update.project_name
       }
     }
   }
