@@ -26,27 +26,10 @@ resource "aws_codepipeline" "cd-container-images" {
     }
   }
 
-  stage {
-    name = "Build"
 
-    action {
-      name             = "UpdatePipeline"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      version          = "1"
-      run_order        = 1
-      input_artifacts  = ["git_base_image"]
-      output_artifacts = []
-
-      configuration = {
-        ProjectName = module.codebuild-self-update.project_name
-      }
-    }
-  }
 
   stage {
-    name = "GetChangedFiles"
+    name = "Changes"
 
     action {
       name             = "GetChangedFiles"
@@ -63,7 +46,7 @@ resource "aws_codepipeline" "cd-container-images" {
   }
 
   stage {
-    name = "GetActionsRequired"
+    name = "Actions"
 
     action {
       name             = "GetActionsRequired"
@@ -75,7 +58,7 @@ resource "aws_codepipeline" "cd-container-images" {
       output_artifacts = ["actions_required"]
       configuration = {
         PrimarySource = "git_base_image"
-        ProjectName = module.codebuild-get-actions-required.project_name
+        ProjectName   = module.codebuild-get-actions-required.project_name
       }
     }
   }
@@ -95,9 +78,9 @@ resource "aws_codepipeline" "cd-container-images" {
       output_artifacts = []
 
       configuration = {
-        PrimarySource = "git_base_image"
-        ProjectName   = module.codebuild-build-container-docker-hub.project_name
-        EnvironmentVariables = jsonencode([{"name": "CHECK_TRIGGER", "value": 1}, {"name":"ACTION_NAME", "value": "BuildAndPushCdImage"}])
+        PrimarySource        = "git_base_image"
+        ProjectName          = module.codebuild-build-container-docker-hub.project_name
+        EnvironmentVariables = jsonencode([{ "name" : "CHECK_TRIGGER", "value" : 1 }, { "name" : "ACTION_NAME", "value" : "BuildAndPushCdImage" }])
       }
     }
 
@@ -112,9 +95,28 @@ resource "aws_codepipeline" "cd-container-images" {
       output_artifacts = []
 
       configuration = {
-        PrimarySource = "git_base_image"
-        ProjectName   = module.codebuild-build-container-ecr.project_name
-        EnvironmentVariables = jsonencode([{"name": "CHECK_TRIGGER", "value": 1}, {"name":"ACTION_NAME", "value": "BuildAndPushCdImage"}])
+        PrimarySource        = "git_base_image"
+        ProjectName          = module.codebuild-build-container-ecr.project_name
+        EnvironmentVariables = jsonencode([{ "name" : "CHECK_TRIGGER", "value" : 1 }, { "name" : "ACTION_NAME", "value" : "BuildAndPushCdImage" }])
+      }
+    }
+  }
+
+  stage {
+    name = "Updates"
+
+    action {
+      name             = "UpdatePipeline"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      run_order        = 1
+      input_artifacts  = ["git_base_image"]
+      output_artifacts = []
+
+      configuration = {
+        ProjectName = module.codebuild-self-update.project_name
       }
     }
   }
