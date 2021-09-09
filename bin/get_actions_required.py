@@ -1,16 +1,63 @@
 #! /usr/bin/python
+import argparse
 import json
 import os
 
+USAGE = """
+Usage: get_actions_required.py \
+  -c path/to/changed_files.json
+  -t path/to/action_triggers.json
+  -o path/to/required/output/actions_required.json
 
-def get_json_from_file(file: str):
-    with open(file) as json_file:
-        changed_files = json.load(json_file)
-        return changed_files
+Examples:
+- (input) changed_files.json
+
+[
+    "docker/Dockerfile"
+]
+
+- (input) action_triggers.json
+
+[
+    {
+        "action": "BuildContainer",
+        "trigger_paths": [
+            "docker/Dockerfile",
+            "docker/bin"
+        ]
+    },
+    {
+        "action": "DoSomethingElse",
+        "trigger_paths": [
+            "somewhere/else/changed"
+        ]
+    }
+]
+
+- (output) actions_required.json
+
+[
+    {
+        "action": "BuildContainer",
+        "required": true
+    },
+    {
+        "action": "SomethingElse",
+        "required": false
+    }
+]
+
+"""
 
 
-def write_json_to_file(file: str, data: bool):
-    with open(file, "w") as outfile:
+def get_json_from_file(file_path: str):
+    with open(file_path, "r") as json_file:
+        file_content = json.load(json_file)
+        return file_content
+
+
+def write_json_to_file(file_path: str, data: str):
+    with open(file_path, "w") as outfile:
         json.dump(data, outfile)
 
 
@@ -24,15 +71,49 @@ def does_path_exist_in_changed_files(action_triggers, changed_files) -> bool:
     )
 
 
-def main():
-    source_path = os.getenv("CODEBUILD_SRC_DIR")
-    changed_files = os.getenv("CODEBUILD_SRC_DIR_changed_files")
-    print(changed_files)
-    changed_files_content = get_json_from_file(changed_files + "/changed_files.json")
+def read_arguments():
+    parser = argparse.ArgumentParser()
 
-    actions_triggers = os.getenv("ACTION_TRIGGERS")
-    actions_triggers_path = source_path + actions_triggers
-    actions_triggers_content = get_json_from_file(actions_triggers_path)
+    parser.add_argument(
+        "-c",
+        action="store",
+        dest="changed_files_json",
+        help="A JSON file containing the list of files changed in the PR",
+    )
+
+    parser.add_argument(
+        "-t",
+        action="store",
+        dest="action_triggers_json",
+        help="A JSON file containing the list of pipeline actions and paths that should trigger them",
+    )
+
+    parser.add_argument(
+        "-o",
+        action="store",
+        dest="output_actions_file",
+        help="The path and filename to save the output file to",
+    )
+
+    arguments = parser.parse_args()
+
+    if not all(
+        [
+            arguments.changed_files_json,
+            arguments.action_triggers_json,
+            arguments.output_actions_file,
+        ]
+    ):
+        print(USAGE)
+        exit(1)
+
+    return arguments
+
+
+def main():
+    arguments = read_arguments()
+    changed_files_content = get_json_from_file(arguments.changed_files_json)
+    actions_triggers_content = get_json_from_file(arguments.actions_triggers_json)
     actions_required = [
         {
             "action": trigger["action"],
@@ -42,7 +123,8 @@ def main():
         }
         for trigger in actions_triggers_content
     ]
-    write_json_to_file(source_path + "/actions_required.json", actions_required)
+    write_json_to_file(arguments.output_actions_file, actions_required)
 
 
-main()
+if __name__ == "__main__":
+    main()
