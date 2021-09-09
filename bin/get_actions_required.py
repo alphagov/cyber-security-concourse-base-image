@@ -113,7 +113,7 @@ def read_arguments():
 def main():
     arguments = read_arguments()
     changed_files_content = get_json_from_file(arguments.changed_files_json)
-    actions_triggers_content = get_json_from_file(arguments.actions_triggers_json)
+    action_triggers_content = get_json_from_file(arguments.action_triggers_json)
     actions_required = [
         {
             "action": trigger["action"],
@@ -121,7 +121,7 @@ def main():
                 trigger["trigger_paths"], changed_files_content
             ),
         }
-        for trigger in actions_triggers_content
+        for trigger in action_triggers_content
     ]
     write_json_to_file(arguments.output_actions_file, actions_required)
 
