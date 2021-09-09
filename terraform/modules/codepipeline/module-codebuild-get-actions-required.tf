@@ -8,7 +8,7 @@ module "codebuild-get-actions-required" {
   stage_name                  = "Actions"
   action_name                 = "GetActionsRequired"
   environment                 = var.environment
-  action_triggers_json        = "$CODEBUILD_SRC_DIR/terraform/modules/codepipeline/action_triggers.json"
-  changed_files_json          = "$CODEBUILD_SRC_DIR_changed_files/changed_files.json"
+  action_triggers_json        = "/terraform/modules/codepipeline/action_triggers.json"
+  changed_files_json          = "/changed_files.json"
   output_artifact_path        = "actions_required.json"
 }
