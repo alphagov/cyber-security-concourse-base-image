@@ -1,5 +1,6 @@
 #! /usr/bin/python
 import argparse
+import errno
 import json
 import os
 import shutil
@@ -76,7 +77,12 @@ def copy_artifact(artifact):
         artifact_root = os.environ[codebuild_src_var]
         source_path = f"{artifact_root}/{artifact['source']}"
         target_path = artifact["target"]
-        created = shutil.copy(source_path, target_path)
+        try:
+            created = shutil.copytree(source_path, target_path)
+        except OSError as error:
+            if error.errno in (errno.ENOTDIR, errno.EINVAL):
+                created = shutil.copy(source_path, target_path)
+            else: raise
         copied = (created == target_path)
     except KeyError as error:
         print(f"Invalid config: {error}")
