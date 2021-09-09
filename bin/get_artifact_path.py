@@ -6,6 +6,15 @@ import sys
 
 USAGE = """
 Usage get_artifact_path.py -a artifact_name
+# prints value of $CODEBUILD_SRC_DIR_artifact_name
+OR get_artifact_path.py -a default
+# prints value of $CODEBUILD_SRC_DIR
+OR get_artifact_path.py -a not_a_real_artifact
+# exit(1)s and prints to stderr
+
+examples
+SRC=$(get_artifact_path.py -a default)
+ZIP=$(get_artifact_path.py -a lambda_zip)
 """
 
 def read_arguments():
