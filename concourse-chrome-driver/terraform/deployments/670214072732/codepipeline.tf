@@ -21,7 +21,7 @@ resource "aws_codepipeline" "cd-chrome-driver" {
       configuration = {
         ConnectionArn    = "arn:aws:codestar-connections:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:connection/${var.codestar_connection_id}"
         FullRepositoryId = "alphagov/cyber-security-concourse-base-image"
-        BranchName       = "CE-256-migrate-pipeline"
+        BranchName       = "master"
       }
     }
   }
