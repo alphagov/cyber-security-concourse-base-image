@@ -11,6 +11,6 @@ module "codebuild-get-changed-file-list" {
   github_pat                  = var.github_pat
   repo_name                   = var.repo_name
   docker_hub_credentials      = var.docker_hub_credentials
-  output_artifact_path        = var.output_artifact_path
-  artifact_bucket             = data.aws_s3_bucket.artifact_store.bucket
+  output_artifact_path        = var.changed_files_json_test
+  #artifact_bucket             = data.aws_s3_bucket.artifact_store.bucket
 }

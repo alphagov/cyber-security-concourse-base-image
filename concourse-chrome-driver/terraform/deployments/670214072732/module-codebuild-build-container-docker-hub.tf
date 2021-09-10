@@ -16,7 +16,7 @@ module "codebuild-build-container-docker-hub-concourse" {
   source              = "github.com/alphagov/cyber-security-shared-terraform-modules//codebuild/codebuild_build_container_docker_hub"
   service_role_name   = var.codebuild_service_role_name
   docker_hub_repo     = "gdscyber/concourse-chrome-driver"
-  stage_name          = "ConcourseDockerImage"
+  stage_name          = "BuildDockerImages"
   action_name         = "BuildAndPushConcourseImage"
   build_context       = var.build_context
   dockerfile          = var.dockerfile

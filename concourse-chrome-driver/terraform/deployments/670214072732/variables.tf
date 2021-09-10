@@ -21,18 +21,6 @@ variable "docker_hub_credentials" {
   default     = "docker_hub_credentials"
 }
 
-variable "stage_name" {
-  description = "The name of the pipeline stage"
-  type        = string
-  default     = ""
-}
-
-variable "action_name" {
-  description = "The name of the pipeline stage action"
-  type        = string
-  default     = ""
-}
-
 variable "dockerfile" {
   description = "Path to the dockerfile"
   type        = string
@@ -52,14 +40,34 @@ variable "build_context" {
 variable "output_artifact_path" {
   description = "the S3 path to store the output atrifact"
   type        = string
-  default     = "cd-chrome-driver/output-artifacts"
+  default     = "actions_required.json"
 }
 
-variable "action_triggers" {
+variable "artifact_bucket" {
+  description = "S3 path where the artifact will be stored"
+  type        = string
+  default     = ""
+}
+
+variable "action_triggers_json" {
   description = "the path to the action_triggers.json file in your repo, relative to the root of the repo."
   type        = string
   default     = "/terraform/modules/codepipeline/action_triggers.json"
 }
+
+variable "changed_files_json" {
+  description = "changed files JSON"
+  type        = string
+  default     = "/changed_files.json"
+}
+
+variable "changed_files_json_test" {
+  description = "changed files JSON"
+  type        = string
+  default     = "changed_files.json"
+}
+
+
 
 variable "environment" {
   type    = string
