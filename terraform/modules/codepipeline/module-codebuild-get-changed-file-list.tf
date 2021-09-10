@@ -11,6 +11,5 @@ module "codebuild-get-changed-file-list" {
   action_name                 = "GetChangedFiles"
   repo_name                   = "cyber-security-concourse-base-image"
   docker_hub_credentials      = var.docker_hub_credentials
-  output_artifact_path        = "cd-images-pipeline/output-artifacts"
-  artifact_bucket             = data.aws_s3_bucket.artifact_store.bucket
+  output_artifact_path        = "changed_files.json"
 }

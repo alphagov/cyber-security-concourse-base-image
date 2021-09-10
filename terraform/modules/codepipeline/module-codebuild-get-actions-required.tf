@@ -8,7 +8,7 @@ module "codebuild-get-actions-required" {
   stage_name                  = "Actions"
   action_name                 = "GetActionsRequired"
   environment                 = var.environment
-  output_artifact_path        = "cd-images-pipeline/output-artifacts"
-  artifact_bucket             = data.aws_s3_bucket.artifact_store.bucket
-  action_triggers             = "/terraform/modules/codepipeline/action_triggers.json"
+  changed_files_json          = "/changed_files.json"
+  output_artifact_path        = "actions_required.json"
+  action_triggers_json        = "/terraform/modules/codepipeline/action_triggers.json"
 }

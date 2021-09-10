@@ -110,7 +110,7 @@ resource "aws_codepipeline" "cd-chrome-driver" {
       provider         = "CodeBuild"
       version          = "1"
       input_artifacts  = ["git_base_image"]
-      output_artifacts = ["terraform_output"]
+      output_artifacts = []
       configuration = {
         ProjectName = module.codebuild-self-update.project_name
       }
