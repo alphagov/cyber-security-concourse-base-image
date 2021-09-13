@@ -1,0 +1,16 @@
+[
+  {
+    "action": "BuildAndPushCdImage",
+    "trigger_paths": [
+      "Dockerfile",
+      "bin"
+    ]
+  },
+  {
+    "action": "BuildAndPushConcourseImage",
+    "trigger_paths": [
+      "Dockerfile",
+      "bin"
+    ]
+  }
+]
