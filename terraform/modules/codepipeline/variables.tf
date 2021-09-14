@@ -19,7 +19,7 @@ variable "environment" {
 
 variable "pipeline_name" {
   type    = string
-  default = "cd-container-images"
+  default = "cd-base-images"
 }
 
 variable "github_pat" {
