@@ -82,15 +82,6 @@ resources:
         - gds-gsuite-govuk-paas/bin/*
       uri: git@github.com:alphagov/cyber-security-splunk-apps.git
 
-  - name: salesforce-splunk-image-git
-    type: git
-    source:
-      branch: master
-      private_key: ((gsuite-splunk-private-key))
-      paths:
-        - gds-salesforce-forwarder-paas/
-      uri: git@github.com:alphagov/cyber-security-splunk-apps.git
-
   - name: csls-image-git
     type: git
     source:
@@ -163,13 +154,6 @@ resources:
     source:
       <<: *docker-creds
       repository: gdscyber/gsuite-splunk
-      tag: latest
-
-  - name: salesforce-splunk-image-docker-hub
-    type: registry-image
-    source:
-      <<: *docker-creds
-      repository: gdscyber/salesforce-splunk
       tag: latest
 
   - name: csls-image-docker-hub
@@ -501,49 +485,6 @@ jobs:
           <<: *health_status_notify
           params:
             message: "Gsuite splunk image Docker Hub upload failed."
-            health: unhealthy
-
-  # base-image: splunk/splunk
-  - name: build-salesforce-splunk-docker-image
-    serial: false
-    plan:
-      - get: salesforce-splunk-image-git
-        trigger: true
-      - task: build
-        privileged: true
-        config:
-          <<: *build-image-config
-          params:
-            CONTEXT: salesforce-splunk-image-git/gds-salesforce-forwarder-paas/
-          inputs:
-            - name: salesforce-splunk-image-git
-          outputs:
-            - name: image
-          run:
-            path: build
-        on_success:
-          <<: *health_status_notify
-          params:
-            message: "Salesforce splunk image build completed successfully."
-            health: healthy
-        on_failure:
-          <<: *health_status_notify
-          params:
-            message: "Salesforce splunk image build failed."
-            health: unhealthy
-
-      - put: salesforce-splunk-image-docker-hub
-        params:
-          image: image/image.tar
-        on_success:
-          <<: *health_status_notify
-          params:
-            message: "Salesforce splunk image Docker Hub upload completed successfully."
-            health: healthy
-        on_failure:
-          <<: *health_status_notify
-          params:
-            message: "Salesforce splunk image Docker Hub upload failed."
             health: unhealthy
 
   - name: build-http-api-resource-docker-image
