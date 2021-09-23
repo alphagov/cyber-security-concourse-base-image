@@ -10,6 +10,7 @@ variable "codebuild_service_role_name" {
 variable "docker_hub_credentials" {
   description = "Name of the secret in SSM that stores the Docker Hub credentials"
   type        = string
+  default     = "docker_hub_credentials"
 }
 
 variable "environment" {

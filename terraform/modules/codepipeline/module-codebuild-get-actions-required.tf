@@ -5,6 +5,7 @@ module "codebuild-get-actions-required" {
   deployment_role_name        = "CodePipelineDeployerRole_${data.aws_caller_identity.current.account_id}"
   codebuild_image             = "gdscyber/cyber-security-cd-base-image:latest"
   pipeline_name               = var.pipeline_name
+  docker_hub_credentials      = var.docker_hub_credentials
   stage_name                  = "Actions"
   action_name                 = "GetActionsRequired"
   environment                 = var.environment
