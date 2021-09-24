@@ -71,17 +71,6 @@ resources:
         - docker/concourse-worker-health/Dockerfile
       uri: https://github.com/alphagov/cyber-security-cloudwatch-config.git
 
-  - name: gsuite-splunk-image-git
-    type: git
-    source:
-      branch: master
-      private_key: ((gsuite-splunk-private-key))
-      paths:
-        - gds-gsuite-govuk-paas/Dockerfile
-        - gds-gsuite-govuk-paas/input-add-on-for-g-suite-app*
-        - gds-gsuite-govuk-paas/bin/*
-      uri: git@github.com:alphagov/cyber-security-splunk-apps.git
-
   - name: csls-image-git
     type: git
     source:
@@ -147,13 +136,6 @@ resources:
     source:
       <<: *docker-creds
       repository: gdscyber/concourse-worker-health
-      tag: latest
-
-  - name: gsuite-splunk-image-docker-hub
-    type: registry-image
-    source:
-      <<: *docker-creds
-      repository: gdscyber/gsuite-splunk
       tag: latest
 
   - name: csls-image-docker-hub
@@ -442,49 +424,6 @@ jobs:
           <<: *health_status_notify
           params:
             message: "CSLS image Docker Hub upload failed."
-            health: unhealthy
-
-  # base-image: splunk/splunk
-  - name: build-gsuite-splunk-docker-image
-    serial: false
-    plan:
-      - get: gsuite-splunk-image-git
-        trigger: true
-      - task: build
-        privileged: true
-        config:
-          <<: *build-image-config
-          params:
-            CONTEXT: gsuite-splunk-image-git/gds-gsuite-govuk-paas/
-          inputs:
-            - name: gsuite-splunk-image-git
-          outputs:
-            - name: image
-          run:
-            path: build
-        on_success:
-          <<: *health_status_notify
-          params:
-            message: "Gsuite splunk image build completed successfully."
-            health: healthy
-        on_failure:
-          <<: *health_status_notify
-          params:
-            message: "Gsuite splunk image build failed."
-            health: unhealthy
-
-      - put: gsuite-splunk-image-docker-hub
-        params:
-          image: image/image.tar
-        on_success:
-          <<: *health_status_notify
-          params:
-            message: "Gsuite splunk image Docker Hub upload completed successfully."
-            health: healthy
-        on_failure:
-          <<: *health_status_notify
-          params:
-            message: "Gsuite splunk image Docker Hub upload failed."
             health: unhealthy
 
   - name: build-http-api-resource-docker-image
