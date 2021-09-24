@@ -14,7 +14,7 @@ variable "docker_hub_credentials" {
 
 variable "environment" {
   type    = string
-  default = "test"
+  default = "prod"
 }
 
 variable "pipeline_name" {
